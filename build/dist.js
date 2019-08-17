@@ -1,6 +1,6 @@
 /**
  * @module build/dist
- * 
+ *
  * Webpack configuration for building the browser-compatible
  * distribution of the library. This will result in a single
  * JS file and a single CSS file suitable for loading directly
@@ -16,11 +16,11 @@ const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin') //
 // base this on the production webpack config
 const base = require('./prod')
 // get the package metadata from `package.json`
-const package = require('../package.json')
+const pkg = require('../package.json')
 // set the version
-const version = process.env.VERSION || package.version
+const version = process.env.VERSION || pkg.version
 // give our output files the same name as our package
-const outfile = package.name
+const outfile = pkg.name
 
 const builds = {
   development: {
@@ -29,33 +29,33 @@ const builds = {
       mode: 'development',
       output: {
         filename: `${outfile}.js`,
-        libraryTarget: 'umd'
+        libraryTarget: 'umd',
       },
       plugins: [
         new MiniCssExtractPlugin({
-          filename: `${outfile}.css`
-        })
-      ]
-    }
+          filename: `${outfile}.css`,
+        }),
+      ],
+    },
   },
   production: {
     config: {
       mode: 'production',
       output: {
         filename: `${outfile}.min.js`,
-        libraryTarget: 'umd'
+        libraryTarget: 'umd',
       },
       plugins: [
         new MiniCssExtractPlugin({
-          filename: `${outfile}.min.css`
-        })
+          filename: `${outfile}.min.css`,
+        }),
       ],
       performance: {
-        hints: false
-      }
+        hints: false,
+      },
     },
-    env: 'production'
-  }
+    env: 'production',
+  },
 }
 
 function genConfig (opts) {
@@ -63,8 +63,8 @@ function genConfig (opts) {
 
   config.plugins = config.plugins.concat([
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(opts.env || 'development')
-    })
+      'process.env.NODE_ENV': JSON.stringify(opts.env || 'development'),
+    }),
   ])
 
   if (opts.env) {
@@ -72,19 +72,19 @@ function genConfig (opts) {
       new webpack.BannerPlugin({
         banner: `/*!
 * VStripeInput v${version}
-* Forged by ${package.author}
-* Released under the ${package.license} License.
+* Forged by ${pkg.author}
+* Released under the ${pkg.license} License.
 */     `,
         raw: true,
-        entryOnly: true
-      })
+        entryOnly: true,
+      }),
     ])
     config.optimization = {
       minimizer: [
         new TerserPlugin({
           cache: true,
           parallel: true,
-          sourceMap: true
+          sourceMap: true,
         }),
         new OptimizeCssAssetsPlugin({
           assetNameRegExp: /\.css$/g,
@@ -92,14 +92,13 @@ function genConfig (opts) {
           cssProcessorOptions: {
             discardComments: { removeAll: true },
             postcssZindex: false,
-            reduceIdents: false
+            reduceIdents: false,
           },
-          canPrint: false
-        })
-      ]
+          canPrint: false,
+        }),
+      ],
     }
   }
-
   return config
 }
 
