@@ -1,0 +1,25 @@
+{
+  "defaultSeverity": "error",
+  "extends": "typestrict",
+  "linterOptions": {
+    "exclude": [
+      "**/*.spec.js",
+      "**/node_modules/**/*"
+    ]
+  },
+  "jsRules": {},
+  "rules": {
+    "array-type": [true, "array"],
+    "use-type-alias": true,
+    "no-inferrable-types": true,
+    "unified-signatures": true,
+    "no-undefined-argument": true,
+    "use-default-type-parameter": false,
+    "no-unused-variable": false,
+    "no-invalid-this": false,
+    "restrict-plus-operands": false,
+    "no-useless-cast": false,
+    "no-floating-promises": false
+  },
+  "rulesDirectory": []
+}
