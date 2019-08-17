@@ -8,9 +8,6 @@
 require('dotenv').config()
 
 const os = require('os')
-/**
- * TODO: Figure out if we want to keep HappyPack. Is it necessary for such a small library?
- */
 const HappyPack = require('happypack') // speeds up build by doing transforms in parallel
 const MiniCssExtractPlugin = require('mini-css-extract-plugin') // extracts CSS from JS
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin') // just what the name implies

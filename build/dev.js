@@ -8,9 +8,6 @@
 
 const path = require('path')
 const merge = require('webpack-merge') // merge multiple webpack configs
-/**
- * TODO: Figure out if we want to keep HappyPack. Is it necessary for such a small library?
- */
 const HappyPack = require('happypack') // speeds up build by doing transforms in parallel
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin') // parallel thread type-checker
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
@@ -21,6 +18,9 @@ const { config: baseWebpackConfig, happyThreadPool } = require('./base')
 // Helpers
 const resolve = file => path.resolve(__dirname, file)
 
+// lib metadata
+const libName = require('change-case').pascalCase(require('../package.json').name)
+
 module.exports = merge(baseWebpackConfig, {
   devtool: 'source-map',
   entry: ['core-js/stable', './dev/index.js'],
@@ -28,11 +28,11 @@ module.exports = merge(baseWebpackConfig, {
     filename: '[name].js',
     path: resolve('../dev'),
     publicPath: '/dev/',
-    library: 'VStripeInput', // do we need this???
+    library: libName,
   },
   resolve: {
     alias: {
-      vuetify: 'vuetify/lib', // vuetify/lib ???
+      vuetify: 'vuetify/lib',
       vue$: 'vue/dist/vue.esm.js',
     },
   },

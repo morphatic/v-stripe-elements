@@ -6,9 +6,6 @@
  */
 
 const merge = require('webpack-merge') // merge multiple webpack configs
-/**
- * TODO: Figure out if we want to keep HappyPack. Is it necessary for such a small library?
- */
 const HappyPack = require('happypack') // speeds up build by doing transforms in parallel
 // const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin') // parallel thread type-checker
 const { config: baseWebpackConfig, happyThreadPool } = require('./base')
@@ -16,14 +13,18 @@ const { config: baseWebpackConfig, happyThreadPool } = require('./base')
 // Helpers
 const resolve = file => require('path').resolve(__dirname, file)
 
+// lib metadata
+const pkg = require('../package.json')
+const libName = require('change-case').pascalCase(pkg.name)
+
 module.exports = merge(baseWebpackConfig, {
   entry: {
-    app: './src/index.ts',
+    [pkg.name]: './src/index.ts',
   },
   output: {
     path: resolve('../dist'),
     publicPath: '/dist/',
-    library: 'VStripeInput', // do we need this???
+    library: libName,
     libraryTarget: 'umd',
     libraryExport: 'default',
     // See https://github.com/webpack/webpack/issues/6522

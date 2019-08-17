@@ -4,7 +4,8 @@
  * Webpack configuration for building the browser-compatible
  * distribution of the library. This will result in a single
  * JS file and a single CSS file suitable for loading directly
- * in a web page, and can be served, e.g. by unpkg
+ * in a web page, and can be served, e.g. by unpkg, jsdelivr,
+ * cdnjs, etc.
  */
 
 const webpack = require('webpack')
@@ -17,10 +18,10 @@ const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin') //
 const base = require('./prod')
 // get the package metadata from `package.json`
 const pkg = require('../package.json')
+// convert the package name to PascalCase
+const libName = require('change-case').pascalCase(pkg.name)
 // set the version
 const version = process.env.VERSION || pkg.version
-// give our output files the same name as our package
-const outfile = pkg.name
 
 const builds = {
   development: {
@@ -28,12 +29,12 @@ const builds = {
       devtool: 'source-map',
       mode: 'development',
       output: {
-        filename: `${outfile}.js`,
+        filename: '[name].js',
         libraryTarget: 'umd',
       },
       plugins: [
         new MiniCssExtractPlugin({
-          filename: `${outfile}.css`,
+          filename: '[name].css',
         }),
       ],
     },
@@ -42,12 +43,12 @@ const builds = {
     config: {
       mode: 'production',
       output: {
-        filename: `${outfile}.min.js`,
+        filename: '[name].min.js',
         libraryTarget: 'umd',
       },
       plugins: [
         new MiniCssExtractPlugin({
-          filename: `${outfile}.min.css`,
+          filename: '[name].min.css',
         }),
       ],
       performance: {
@@ -71,8 +72,8 @@ function genConfig (opts) {
     config.plugins = config.plugins.concat([
       new webpack.BannerPlugin({
         banner: `/*!
-* VStripeInput v${version}
-* Forged by ${pkg.author}
+* ${libName} v${version}
+* Created by ${pkg.author}
 * Released under the ${pkg.license} License.
 */     `,
         raw: true,
