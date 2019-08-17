@@ -4,7 +4,7 @@
       app
       color="primary white--text"
     >
-      <v-app-bar-nav-icon></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon />
       <v-toolbar-title>VStripeInput Demo</v-toolbar-title>
     </v-app-bar>
     <v-content>
@@ -12,7 +12,7 @@
         <v-stripe-input
           v-model="source"
           :api-key="api_key"
-        ></v-stripe-input>
+        />
       </v-container>
     </v-content>
   </v-app>
@@ -23,11 +23,11 @@
 
   export default {
     components: {
-      VStripeInput
+      VStripeInput,
     },
     data: () => ({
       api_key: 'sk_test_4eC39HqLyjWDarjtT1zdp7dc',
-      source: null
-    })
+      source: null,
+    }),
   }
 </script>

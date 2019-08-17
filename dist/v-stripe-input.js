@@ -147,7 +147,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-/* harmony default export */ __webpack_exports__["default"] = (_VStripeInput__WEBPACK_IMPORTED_MODULE_0__["default"]);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  install: function install(Vue) {
+    Vue.component('v-stripe-input', _VStripeInput__WEBPACK_IMPORTED_MODULE_0__["default"]);
+  }
+});
 
 /***/ }),
 

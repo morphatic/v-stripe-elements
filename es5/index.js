@@ -15,6 +15,10 @@ var _VStripeInput = _interopRequireDefault(require("./VStripeInput"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-var _default = _VStripeInput["default"];
+var _default = {
+  install: function install(Vue) {
+    Vue.component('v-stripe-input', _VStripeInput["default"]);
+  }
+};
 exports["default"] = _default;
 //# sourceMappingURL=index.js.map

@@ -23,7 +23,7 @@ const resolve = file => path.resolve(__dirname, file)
 
 module.exports = merge(baseWebpackConfig, {
   devtool: 'source-map',
-  entry: ['babel-polyfill', './dev/index.js'],
+  entry: ['core-js/stable', './dev/index.js'],
   output: {
     filename: '[name].js',
     path: resolve('../dev'),
