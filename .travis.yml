@@ -18,7 +18,7 @@ install:
   - yarn --frozen-lockfile --non-interactive
 
 script:
-  - yarn test
+  - yarn test:coverage
 
 after_success:
   - yarn coverage
