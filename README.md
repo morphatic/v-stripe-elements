@@ -1,5 +1,10 @@
 # VStripeInput
 
+[![Build Status](https://travis-ci.org/morphatic/v-stripe-input.svg?branch=master)](https://travis-ci.org/morphatic/v-stripe-input)
+[![Coverage Status](https://coveralls.io/repos/github/morphatic/v-stripe-input/badge.svg?branch=master)](https://coveralls.io/github/morphatic/v-stripe-input?branch=master)
+![npm](https://img.shields.io/npm/v/@morphatic/v-stripe-input.svg)
+![MIT](https://img.shields.io/npm/l/@morphatic/v-stripe-input.svg)
+
 A Vue component that styles [Stripe Elements](https://stripe.com/payments/elements) to match the [Vuetify UI library](https://vuetifyjs.com).
 
 ## Installation and Configuration

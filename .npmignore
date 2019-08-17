@@ -1,0 +1,30 @@
+# hidden/config directories
+.idea/
+.github/
+.nyc_output/
+.vscode/
+
+# other directories
+build/
+dev/
+config/
+coverage/
+lib-temp/
+test/
+
+# hidden/config files
+.babelrc
+.editorconfig
+.eslintignore
+.eslintrc.js
+.eslintrc.json
+.istanbul.yml
+.jshintrc
+.travis.yml
+
+# config files
+babel.config.js
+jest.config.js
+postcss.config.js
+tsconfig.*
+tslint.*

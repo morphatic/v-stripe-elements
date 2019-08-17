@@ -19,7 +19,7 @@
 </template>
 
 <script>
-  import { VStripeInput } from '../src/'
+  import VStripeInput from '../src/'
 
   export default {
     components: {
