@@ -1,8 +1,8 @@
 { /* TypeScript Options for Distribution */
   "extends": "./tsconfig.json", /* overrides/extends the Base options */
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
+    "target": "esNext",
+    "module": "esNext",
     "outDir": "./lib-temp",     /* intermediate directory from which dist is built */
     "sourceMap": false,
     "inlineSourceMap": true,

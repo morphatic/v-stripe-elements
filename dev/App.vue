@@ -9,10 +9,22 @@
     </v-app-bar>
     <v-content>
       <v-container fluid>
-        <v-stripe-input
-          v-model="source"
-          :api-key="api_key"
-        />
+        <v-row>
+          <v-col cols="6">
+            <v-stripe-input
+              v-model="source"
+              :api-key="apiKey"
+              label="Some label"
+              hint="Some hint"
+            />
+          </v-col>
+          <v-col cols="6">
+            <v-text-field
+              label="Some label"
+              hint="Some hint"
+            />
+          </v-col>
+        </v-row>
       </v-container>
     </v-content>
   </v-app>
@@ -26,7 +38,7 @@
       VStripeInput,
     },
     data: () => ({
-      api_key: 'sk_test_4eC39HqLyjWDarjtT1zdp7dc',
+      apiKey: 'pk_test_TYooMQauvdEDq54NiTphI7jx',
       source: null,
     }),
   }

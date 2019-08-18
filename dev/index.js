@@ -1,12 +1,17 @@
 import Vue from 'vue'
 import App from './App'
 import Vuetify from 'vuetify'
+import LoadScript from 'vue-plugin-load-script'
 
 Vue.config.productionTip = false
 
 Vue.use(Vuetify)
+Vue.use(LoadScript)
 
 const vuetify = new Vuetify({
+  theme: {
+    dark: true,
+  },
   icons: {
     iconfont: 'mdiSvg',
   },
