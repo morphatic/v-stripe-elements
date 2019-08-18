@@ -34508,15 +34508,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _VStripeInput__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./VStripeInput */ "./src/VStripeInput.ts");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VStripeInput", function() { return _VStripeInput__WEBPACK_IMPORTED_MODULE_0__["default"]; });
 
-// import { VueConstructor } from 'vue'
 
- // export default {
-//   install (Vue: VueConstructor, options = {}) {
-//     Vue.component('v-stripe-input', VStripeInput)
-//   },
-// }
 
-/* harmony default export */ __webpack_exports__["default"] = (_VStripeInput__WEBPACK_IMPORTED_MODULE_0__["default"]);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  install: function install(Vue) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    Vue.component('v-stripe-input', _VStripeInput__WEBPACK_IMPORTED_MODULE_0__["default"]);
+  }
+}); // export default VStripeInput
 
 /***/ }),
 
