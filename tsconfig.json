@@ -22,7 +22,8 @@
     /* Type-Checking Options */
     "strict": true,                 /* Enable all strict type-checking options. */
     "types": [
-      "vuetify"
+      "vuetify",
+      "@types/stripe-v3"
     ],
 
     /* Additional Checks */

@@ -1,24 +1,20 @@
+// Types
+import { ComponentOptions, VNode } from 'vue'
+
 // Styles
 import './VStripeInput.sass'
+
 // Extensions and Components
-import { VTextField } from 'vuetify/lib'
-// import { VNode, CreateElement } from 'vue'
+import { VProgressLinear, VTextField } from 'vuetify/lib'
 
-// Vuetify Types
-// import 'vuetify/types'
+// Mixins
+import mixins from 'vuetify/lib/util/mixins'
+const base = mixins(VTextField)
 
-// import { VTextField, VLabel } from 'vuetify/src/components'
-
-// Directives
-// import ripple from 'vuetify/src/directives/ripple'
-
-// Utilities
-// import mixins from 'vuetify/src/util/mixins'
-
-const VStripeInput = {
+// Extend `base` to define the VStripeInput component
+export default base.extend<ComponentOptions<VTextField>>({
   name: 'v-stripe-input',
   extends: VTextField,
-  // directives: { ripple },
   inheritAttrs: false,
   props: {
     apiKey: {
@@ -29,40 +25,27 @@ const VStripeInput = {
       type: String,
       default: 'Roboto',
     },
+    hideIcon: Boolean,
+    hidePostalCode: Boolean,
+    iconStyle: {
+      type: String,
+      default: 'default',
+    },
     zip: {
       type: String,
       default: '',
     },
-    // appendOuterIcon: String,
-    autofocus: Boolean,
-    // clearable: Boolean,
-    // clearIcon: {
-    //   type: String,
-    //   default: '$vuetify.icons.clear'
-    // },
-    // filled: Boolean,
-    // flat: Boolean,
-    // fullWidth: Boolean,
-    // label: String,
-    // outlined: Boolean,
-    // placeholder: String,
-    // prefix: String,
-    // prependInnerIcon: String,
-    // reverse: Boolean,
-    // rounded: Boolean,
-    // shaped: Boolean,
-    // singleLine: Boolean,
-    // solo: Boolean,
-    // soloInverted: Boolean,
-    // suffix: String,
   },
-  data: () => ({
-    card: null,
-    cardError: null,
-    elements: null,
-    okToSubmit: false,
-    stripe: null,
-  }),
+  data () {
+    return {
+      card: null,
+      cardError: null,
+      elements: null,
+      isReady: false,
+      okToSubmit: false,
+      stripe: null,
+    }
+  },
   computed: {
     classes (): object {
       return {
@@ -71,57 +54,108 @@ const VStripeInput = {
       }
     },
   },
-  // watch: {},
-  created () {
+  watch: {
+    isDark (newVal: boolean, oldVal: boolean) {
+      if (newVal !== oldVal && this.card !== null) {
+        const style = this.genStyle(this.font, this.$vuetify.theme.currentTheme, this.$vuetify.theme.dark)
+        this.card.update({ style })
+      }
+    },
+    isDisabled (disabled: boolean, oldVal: boolean) {
+      if (disabled !== oldVal) {
+        this.card.update({ disabled })
+      }
+    },
   },
   mounted () {
     // Handle tasks NOT related to actual DOM rendering or manipulation
-    const self = this
-    const style = this.genStyle(this.font, this.$vuetify.theme.currentTheme, this.$vuetify.theme.dark)
-    const classes = { focus: 'focus', empty: 'empty' }
-    const cardProps = { style, classes, value: { postalCode: this.zip, label: 'x' } }
-    self.loading = true
+    const cardProps = {
+      classes: { focus: 'focus', empty: 'empty' },
+      disabled: this.disabled,
+      hideIcon: this.hideIcon,
+      hidePostalCode: this.hidePostalCode,
+      iconStyle: this.iconStyle,
+      style: this.genStyle(this.font, this.$vuetify.theme.currentTheme, this.$vuetify.theme.dark),
+      value: {
+        postalCode: this.zip,
+      },
+    }
     this.loadStripe()
       // initialize the Stripe.js object
-      // @ts-ignore
-      .then(() => Stripe(self.apiKey)) // eslint-disable-line no-undef
+      .then(() => { this.stripe = Stripe(this.apiKey) }) // eslint-disable-line no-undef
       // then create a Stripe elements generator
-      .then(stripe => stripe.elements(self.genFont(self.font)))
+      .then(() => this.stripe.elements(this.genFont(this.font)))
       // then create a card element
-      .then(elements => elements.create('card', cardProps))
-      // then setup card events and return the card
-      .then(card => {
-        card.on('blur', self.onBlur)
-        card.on('focus', self.onFocus)
-        card.on('ready', e => { self.autofocus && card.focus(); self.$emit('ready', e) })
-        card.on('change', e => {
-          e.error && self.errorBucket.push(e.error.message)
-          e.complete && (self.errorBucket = []) // won't work if there are external rules
-        })
-        return card
+      .then((elements: stripe.elements.Elements) => elements.create('card', cardProps))
+      // then setup card events and mount the card
+      .then((card: stripe.elements.Element) => {
+        this.card = card
+        card.on('blur', this.onCardBlur)
+        card.on('change', this.onCardChange)
+        card.on('focus', this.onCardFocus)
+        card.on('ready', this.onCardReady)
+        card.mount(`#${this.computedId}`)
       })
-      .then(card => {
-        card.mount(`#${self.computedId}`)
-        // console.log(card)
-        self.card = card
-        self.loading = false
-      })
-      .catch(err => { console.log(err) })
+      .catch((err: Error) => { console.log(err) })
   },
   methods: {
-    genFont: font => ({ fonts: [{ cssSrc: `https://fonts.googleapis.com/css?family=${encodeURI(font)}:400` }] }),
-    // see: https://stripe.com/docs/stripe-js/reference#element-mount
-    // All we need is a <div> with a known ID. This <div> will get
-    // replaced by Stripe with an IFrame with their custom inputs.
-    genInput () {
+    clearableCallback () {
+      this.card.clear()
+      VTextField.options.methods.clearableCallback.call(this)
+    },
+    /**
+     * TODO: Should this throw an error if the font is invalid?
+     * Allows users of the component to specify the font that will be used
+     * inside the text fields generated by Stripe. Does NOT affect the font
+     * used by the label, hint, or error messages. These fonts can/should be
+     * set at the app level along with all of the other UI fonts.
+     *
+     * @param   {string} font The name of a Google font, or a URL to a valid font
+     * @returns {object}      An object in the form required by `Stripe.elements()`
+     */
+    genFont (font: string): object {
+      const cssSrc = this.isURL(font)
+        ? font
+        : `https://fonts.googleapis.com/css?family=${encodeURI(font)}:400`
+      return { fonts: [{ cssSrc }] }
+    },
+    /**
+     * Generates the HTML element to which the Stripe element will attach
+     * itself. All that is needed is a <div> with a known ID. This <div>
+     * gets replaced by Stripe with an IFrame with their custom inputs.
+     * see: {@link|https://stripe.com/docs/stripe-js/reference#element-mount}
+     */
+    genInput (): VNode {
       return this.$createElement('div', { attrs: { id: this.computedId } })
     },
-    genStyle: (font: String, theme: VuetifyThemeVariant, dark = false) => ({
+    /**
+     * Maintains the ability for users of the component to control the
+     * loading/progress indicator of the component, but also shows the
+     * progress bar while the Stripe library is being loaded.
+     */
+    genProgress (): VNode | VNode[] | null {
+      if (this.loading === false && this.isReady) return null
+      return this.$slots.progress || this.$createElement(VProgressLinear, {
+        props: {
+          absolute: true,
+          color: (this.loading === true || this.loading === '')
+            ? (this.color || 'primary')
+            : (this.loading || 'primary'),
+          height: this.loaderHeight,
+          indeterminate: true,
+        },
+      })
+    },
+    /**
+     * Generate styles for Stripe elements
+     */
+    genStyle: (font: string, theme: VuetifyThemeVariant, dark = false): object => ({
       base: {
         color: dark ? '#ffffff' : '#000000',
         fontFamily: `'${font}', sans-serif`,
         fontSize: '16px',
         fontSmoothing: 'antialiased',
+        iconColor: dark ? '#eceff1' : '#455a64',
         '::placeholder': {
           color: dark ? 'rgb(255,255,255,0.7)' : 'rgb(0,0,0,0.54)',
         },
@@ -134,7 +168,31 @@ const VStripeInput = {
         iconColor: theme.error,
       },
     }),
-    loadStripe (): Promise<Boolean|Error> {
+    /**
+     * Loosely validates a URL
+     * Based on: {@link|https://github.com/segmentio/is-url}
+     *
+     * @param   {string}  url The string to be tested
+     * @returns {boolean}     True if the url string passes the test
+     */
+    isURL: (url: string): boolean => {
+      const protocolAndDomainRegex = /^(?:\w+:)?\/\/(\S+)$/
+      const localhostDomainRegex = /^localhost[:?\d]*(?:[^:?\d]\S*)?$/
+      const nonLocalhostDomainRegex = /^[^\s.]+\.\S{2,}$/
+      if (typeof url !== 'string') return false
+      const match = url.match(protocolAndDomainRegex)
+      if (!match) return false
+      const everythingAfterProtocol = match[1]
+      if (!everythingAfterProtocol) return false
+      if (
+        localhostDomainRegex.test(everythingAfterProtocol) ||
+        nonLocalhostDomainRegex.test(everythingAfterProtocol)
+      ) {
+        return true
+      }
+      return false
+    },
+    loadStripe (): Promise<boolean> {
       // is Stripe already available?
       if (typeof Stripe !== 'undefined') return Promise.resolve(true)
       // is the external script loader available?
@@ -150,21 +208,35 @@ const VStripeInput = {
           })
       }
     },
-    onBlur (e) {
+    onCardBlur (e: stripe.elements.ElementChangeResponse) {
       this.isFocused = false
-      e && this.$emit('blur', e)
+      this.$emit('blur', e)
     },
-    onClick () {
-      if (this.isFocused || this.disabled) return
-      this.card.focus()
-    },
-    onFocus (e) {
-      if (!this.isFocused) {
-        this.isFocused = true
-        e && this.$emit('focus', e)
+    onCardChange (e: stripe.elements.ElementChangeResponse) {
+      if (e.error) {
+        // handle card errors
+        this.errorBucket.push(e.error.message)
+      }
+      if (e.complete) {
+        // handle card input is complete
+        this.errorBucket = []
+      }
+      if (e.empty) {
+        this.lazyValue = !e.empty
       }
     },
+    onCardFocus (e: stripe.elements.ElementChangeResponse) {
+      this.isFocused = true
+      this.$emit('focus', true) // Do we want to emit? Is this the right value to emit?
+    },
+    onCardReady (e: stripe.elements.ElementChangeResponse) {
+      this.isReady = true
+      this.autofocus && this.card.focus()
+      this.$emit('ready', e)
+    },
+    setLabelWidth () {
+      if (!this.outlined) return
+      this.labelWidth = this.$refs.label.offsetWidth * 0.75 + 6
+    },
   },
-}
-
-export default VStripeInput
+})

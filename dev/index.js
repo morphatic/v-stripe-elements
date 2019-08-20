@@ -10,7 +10,7 @@ Vue.use(LoadScript)
 
 const vuetify = new Vuetify({
   theme: {
-    dark: true,
+    dark: false,
   },
   icons: {
     iconfont: 'mdiSvg',

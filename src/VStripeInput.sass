@@ -9,3 +9,16 @@
     min-width: 0px
     width: calc(100% - 30px)
     max-height: 32px
+  &.v-text-field--outlined
+    .v-label
+      transform: translateY(-14px) scale(0.75)
+      &.v-label--active
+        transform: translateY(-24px) scale(0.75)
+  &.v-text-field--solo
+    .v-label
+      display: none
+  &.v-text-field--filled
+    .StripeElement
+      margin-top: 22px
+    .v-label
+      transform: translateY(-6px) scale(0.75)

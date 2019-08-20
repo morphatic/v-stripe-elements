@@ -34320,22 +34320,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _VStripeInput_sass__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./VStripeInput.sass */ "./src/VStripeInput.sass");
 /* harmony import */ var _VStripeInput_sass__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_VStripeInput_sass__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var vuetify_lib__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuetify/lib */ "./node_modules/vuetify/lib/index.js");
+/* harmony import */ var vuetify_lib_util_mixins__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vuetify/lib/util/mixins */ "./node_modules/vuetify/lib/util/mixins.js");
 // Styles
  // Extensions and Components
 
- // import { VNode, CreateElement } from 'vue'
-// Vuetify Types
-// import 'vuetify/types'
-// import { VTextField, VLabel } from 'vuetify/src/components'
-// Directives
-// import ripple from 'vuetify/src/directives/ripple'
-// Utilities
-// import mixins from 'vuetify/src/util/mixins'
+ // Mixins
 
-var VStripeInput = {
+
+var base = Object(vuetify_lib_util_mixins__WEBPACK_IMPORTED_MODULE_2__["default"])(vuetify_lib__WEBPACK_IMPORTED_MODULE_1__["VTextField"]); // Extend `base` to define the VStripeInput component
+
+/* harmony default export */ __webpack_exports__["default"] = (base.extend({
   name: 'v-stripe-input',
   "extends": vuetify_lib__WEBPACK_IMPORTED_MODULE_1__["VTextField"],
-  // directives: { ripple },
   inheritAttrs: false,
   props: {
     apiKey: {
@@ -34346,18 +34342,23 @@ var VStripeInput = {
       type: String,
       "default": 'Roboto'
     },
+    hideIcon: Boolean,
+    hidePostalCode: Boolean,
+    iconStyle: {
+      type: String,
+      "default": 'default'
+    },
     zip: {
       type: String,
       "default": ''
-    },
-    // appendOuterIcon: String,
-    autofocus: Boolean
+    }
   },
   data: function data() {
     return {
       card: null,
       cardError: null,
       elements: null,
+      isReady: false,
       okToSubmit: false,
       stripe: null
     };
@@ -34369,69 +34370,94 @@ var VStripeInput = {
       });
     }
   },
-  // watch: {},
-  created: function created() {},
+  watch: {
+    isDark: function isDark(newVal, oldVal) {
+      if (newVal !== oldVal && this.card !== null) {
+        var style = this.genStyle(this.font, this.$vuetify.theme.currentTheme, this.$vuetify.theme.dark);
+        this.card.update({
+          style: style
+        });
+      }
+    },
+    isDisabled: function isDisabled(disabled, oldVal) {
+      if (disabled !== oldVal) {
+        this.card.update({
+          disabled: disabled
+        });
+      }
+    }
+  },
   mounted: function mounted() {
+    var _this = this;
+
     // Handle tasks NOT related to actual DOM rendering or manipulation
-    var self = this;
-    var style = this.genStyle(this.font, this.$vuetify.theme.currentTheme, this.$vuetify.theme.dark);
-    var classes = {
-      focus: 'focus',
-      empty: 'empty'
-    };
     var cardProps = {
-      style: style,
-      classes: classes,
+      classes: {
+        focus: 'focus',
+        empty: 'empty'
+      },
+      disabled: this.disabled,
+      hideIcon: this.hideIcon,
+      hidePostalCode: this.hidePostalCode,
+      iconStyle: this.iconStyle,
+      style: this.genStyle(this.font, this.$vuetify.theme.currentTheme, this.$vuetify.theme.dark),
       value: {
-        postalCode: this.zip,
-        label: 'x'
+        postalCode: this.zip
       }
     };
-    self.loading = true;
     this.loadStripe() // initialize the Stripe.js object
-    // @ts-ignore
     .then(function () {
-      return Stripe(self.apiKey);
+      _this.stripe = Stripe(_this.apiKey);
     }) // eslint-disable-line no-undef
     // then create a Stripe elements generator
-    .then(function (stripe) {
-      return stripe.elements(self.genFont(self.font));
+    .then(function () {
+      return _this.stripe.elements(_this.genFont(_this.font));
     }) // then create a card element
     .then(function (elements) {
       return elements.create('card', cardProps);
-    }) // then setup card events and return the card
+    }) // then setup card events and mount the card
     .then(function (card) {
-      card.on('blur', self.onBlur);
-      card.on('focus', self.onFocus);
-      card.on('ready', function (e) {
-        self.autofocus && card.focus();
-        self.$emit('ready', e);
-      });
-      card.on('change', function (e) {
-        e.error && self.errorBucket.push(e.error.message);
-        e.complete && (self.errorBucket = []); // won't work if there are external rules
-      });
-      return card;
-    }).then(function (card) {
-      card.mount("#".concat(self.computedId)); // console.log(card)
-
-      self.card = card;
-      self.loading = false;
+      _this.card = card;
+      card.on('blur', _this.onCardBlur);
+      card.on('change', _this.onCardChange);
+      card.on('focus', _this.onCardFocus);
+      card.on('ready', _this.onCardReady);
+      card.mount("#".concat(_this.computedId));
     })["catch"](function (err) {
       console.log(err);
     });
   },
   methods: {
+    clearableCallback: function clearableCallback() {
+      this.card.clear();
+      vuetify_lib__WEBPACK_IMPORTED_MODULE_1__["VTextField"].options.methods.clearableCallback.call(this);
+    },
+
+    /**
+     * TODO: Should this throw an error if the font is invalid?
+     * Allows users of the component to specify the font that will be used
+     * inside the text fields generated by Stripe. Does NOT affect the font
+     * used by the label, hint, or error messages. These fonts can/should be
+     * set at the app level along with all of the other UI fonts.
+     *
+     * @param   {string} font The name of a Google font, or a URL to a valid font
+     * @returns {object}      An object in the form required by `Stripe.elements()`
+     */
     genFont: function genFont(font) {
+      var cssSrc = this.isURL(font) ? font : "https://fonts.googleapis.com/css?family=".concat(encodeURI(font), ":400");
       return {
         fonts: [{
-          cssSrc: "https://fonts.googleapis.com/css?family=".concat(encodeURI(font), ":400")
+          cssSrc: cssSrc
         }]
       };
     },
-    // see: https://stripe.com/docs/stripe-js/reference#element-mount
-    // All we need is a <div> with a known ID. This <div> will get
-    // replaced by Stripe with an IFrame with their custom inputs.
+
+    /**
+     * Generates the HTML element to which the Stripe element will attach
+     * itself. All that is needed is a <div> with a known ID. This <div>
+     * gets replaced by Stripe with an IFrame with their custom inputs.
+     * see: {@link|https://stripe.com/docs/stripe-js/reference#element-mount}
+     */
     genInput: function genInput() {
       return this.$createElement('div', {
         attrs: {
@@ -34439,6 +34465,27 @@ var VStripeInput = {
         }
       });
     },
+
+    /**
+     * Maintains the ability for users of the component to control the
+     * loading/progress indicator of the component, but also shows the
+     * progress bar while the Stripe library is being loaded.
+     */
+    genProgress: function genProgress() {
+      if (this.loading === false && this.isReady) return null;
+      return this.$slots.progress || this.$createElement(vuetify_lib__WEBPACK_IMPORTED_MODULE_1__["VProgressLinear"], {
+        props: {
+          absolute: true,
+          color: this.loading === true || this.loading === '' ? this.color || 'primary' : this.loading || 'primary',
+          height: this.loaderHeight,
+          indeterminate: true
+        }
+      });
+    },
+
+    /**
+     * Generate styles for Stripe elements
+     */
     genStyle: function genStyle(font, theme) {
       var dark = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
       return {
@@ -34447,6 +34494,7 @@ var VStripeInput = {
           fontFamily: "'".concat(font, "', sans-serif"),
           fontSize: '16px',
           fontSmoothing: 'antialiased',
+          iconColor: dark ? '#eceff1' : '#455a64',
           '::placeholder': {
             color: dark ? 'rgb(255,255,255,0.7)' : 'rgb(0,0,0,0.54)'
           },
@@ -34459,6 +34507,30 @@ var VStripeInput = {
           iconColor: theme.error
         }
       };
+    },
+
+    /**
+     * Loosely validates a URL
+     * Based on: {@link|https://github.com/segmentio/is-url}
+     *
+     * @param   {string}  url The string to be tested
+     * @returns {boolean}     True if the url string passes the test
+     */
+    isURL: function isURL(url) {
+      var protocolAndDomainRegex = /^(?:\w+:)?\/\/(\S+)$/;
+      var localhostDomainRegex = /^localhost[:?\d]*(?:[^:?\d]\S*)?$/;
+      var nonLocalhostDomainRegex = /^[^\s.]+\.\S{2,}$/;
+      if (typeof url !== 'string') return false;
+      var match = url.match(protocolAndDomainRegex);
+      if (!match) return false;
+      var everythingAfterProtocol = match[1];
+      if (!everythingAfterProtocol) return false;
+
+      if (localhostDomainRegex.test(everythingAfterProtocol) || nonLocalhostDomainRegex.test(everythingAfterProtocol)) {
+        return true;
+      }
+
+      return false;
     },
     loadStripe: function loadStripe() {
       // is Stripe already available?
@@ -34476,23 +34548,40 @@ var VStripeInput = {
         });
       }
     },
-    onBlur: function onBlur(e) {
+    onCardBlur: function onCardBlur(e) {
       this.isFocused = false;
-      e && this.$emit('blur', e);
+      this.$emit('blur', e);
     },
-    onClick: function onClick() {
-      if (this.isFocused || this.disabled) return;
-      this.card.focus();
-    },
-    onFocus: function onFocus(e) {
-      if (!this.isFocused) {
-        this.isFocused = true;
-        e && this.$emit('focus', e);
+    onCardChange: function onCardChange(e) {
+      if (e.error) {
+        // handle card errors
+        this.errorBucket.push(e.error.message);
       }
+
+      if (e.complete) {
+        // handle card input is complete
+        this.errorBucket = [];
+      }
+
+      if (e.empty) {
+        this.lazyValue = !e.empty;
+      }
+    },
+    onCardFocus: function onCardFocus(e) {
+      this.isFocused = true;
+      this.$emit('focus', true); // Do we want to emit? Is this the right value to emit?
+    },
+    onCardReady: function onCardReady(e) {
+      this.isReady = true;
+      this.autofocus && this.card.focus();
+      this.$emit('ready', e);
+    },
+    setLabelWidth: function setLabelWidth() {
+      if (!this.outlined) return;
+      this.labelWidth = this.$refs.label.offsetWidth * 0.75 + 6;
     }
   }
-};
-/* harmony default export */ __webpack_exports__["default"] = (VStripeInput);
+}));
 
 /***/ }),
 
@@ -34508,14 +34597,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _VStripeInput__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./VStripeInput */ "./src/VStripeInput.ts");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VStripeInput", function() { return _VStripeInput__WEBPACK_IMPORTED_MODULE_0__["default"]; });
 
+// import { VueConstructor } from 'vue'
 
+ // export default {
+//   install (Vue: VueConstructor, options = {}) {
+//     Vue.component('v-stripe-input', VStripeInput)
+//   },
+// }
 
-/* harmony default export */ __webpack_exports__["default"] = ({
-  install: function install(Vue) {
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-    Vue.component('v-stripe-input', _VStripeInput__WEBPACK_IMPORTED_MODULE_0__["default"]);
-  }
-}); // export default VStripeInput
+/* harmony default export */ __webpack_exports__["default"] = (_VStripeInput__WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 /***/ }),
 
