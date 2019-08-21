@@ -5,13 +5,17 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = void 0;
 
+var _vue = _interopRequireDefault(require("vue"));
+
 require("../src/VStripeInput.sass");
 
 var _lib = require("vuetify/lib");
 
-var _mixins = _interopRequireDefault(require("vuetify/lib/util/mixins"));
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
@@ -19,12 +23,15 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var base = (0, _mixins["default"])(_lib.VTextField); // Extend `base` to define the VStripeInput component
-
-var _default = base.extend({
+// Mixins
+// import mixins from 'vuetify/lib/util/mixins'
+// const base = mixins(VTextField)
+// Extend `base` to define the VStripeInput component
+// export default base.extend<ComponentOptions<VTextField>>({
+var _default2 = _vue["default"].extend({
   name: 'v-stripe-input',
   "extends": _lib.VTextField,
-  inheritAttrs: false,
+  inheritAttrs: true,
   props: {
     apiKey: {
       type: String,
@@ -39,6 +46,20 @@ var _default = base.extend({
     iconStyle: {
       type: String,
       "default": 'default'
+    },
+    nameAndAddress: {
+      type: Object,
+      "default": function _default() {
+        return {
+          name: '',
+          address_line1: '',
+          address_line2: '',
+          address_city: '',
+          address_state: '',
+          address_zip: '',
+          address_country: ''
+        };
+      }
     },
     zip: {
       type: String,
@@ -125,6 +146,48 @@ var _default = base.extend({
 
       _lib.VTextField.options.methods.clearableCallback.call(this);
     },
+
+    /**
+     * Converts the collected payment information into a single-use token
+     * that can safely be passed to your backend API server where a
+     * payment request can be processed.
+     * See {@link|https://stripe.com/docs/stripe-js/reference#stripe-create-token}
+     */
+    createToken: function () {
+      var _createToken = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee() {
+        var _ref, token, error;
+
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.next = 2;
+                return this.stripe.createToken(this.card, this.nameAndAddress);
+
+              case 2:
+                _ref = _context.sent;
+                token = _ref.token;
+                error = _ref.error;
+
+                if (!error) {// do something
+                }
+
+              case 6:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function createToken() {
+        return _createToken.apply(this, arguments);
+      }
+
+      return createToken;
+    }(),
 
     /**
      * TODO: Should this throw an error if the font is invalid?
@@ -272,9 +335,63 @@ var _default = base.extend({
     setLabelWidth: function setLabelWidth() {
       if (!this.outlined) return;
       this.labelWidth = this.$refs.label.offsetWidth * 0.75 + 6;
-    }
+    },
+    verifyCardInfo: function () {
+      var _verifyCardInfo = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee2() {
+        var _ref2, source, error;
+
+        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                if (this.okToSubmit) {
+                  _context2.next = 2;
+                  break;
+                }
+
+                return _context2.abrupt("return");
+
+              case 2:
+                _context2.next = 4;
+                return this.stripe.createSource(this.card, {
+                  currency: 'usd',
+                  metadata: this.meta,
+                  owner: this.owner,
+                  usage: 'reusable'
+                });
+
+              case 4:
+                _ref2 = _context2.sent;
+                source = _ref2.source;
+                error = _ref2.error;
+
+                // if there was a problem
+                if (error) {
+                  // do something
+                  console.log(error);
+                } else {
+                  // payment method verified successfully
+                  this.$emit('cardVerified', source);
+                }
+
+              case 8:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this);
+      }));
+
+      function verifyCardInfo() {
+        return _verifyCardInfo.apply(this, arguments);
+      }
+
+      return verifyCardInfo;
+    }()
   }
 });
 
-exports["default"] = _default;
+exports["default"] = _default2;
 //# sourceMappingURL=VStripeInput.js.map

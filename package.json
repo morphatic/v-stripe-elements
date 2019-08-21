@@ -4,7 +4,18 @@
   "description": "A Vue component that styles Stripe Elements to match the Vuetify UI library.",
   "author": "Morgan Benton <morgan.benton@gmail.com> (https://morphatic.com)",
   "license": "MIT",
-  "main": "index.js",
+  "main": "dist/v-stripe-input.js",
+  "module": "dist/v-stripe-input.js",
+  "jsdelivr": "dist/v-stripe-input.js",
+  "unpkg": "dist/v-stripe-input.js",
+  "types": "types/index.d.ts",
+  "files": [
+    "dist/",
+    "es5/",
+    "lib/",
+    "src/",
+    "types/"
+  ],
   "keywords": [
     "stripe",
     "elements",

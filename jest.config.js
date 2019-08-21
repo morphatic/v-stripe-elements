@@ -10,7 +10,8 @@ module.exports = {
     '^@/test$': '<rootDir>/test/index.js',
     '^@/test/(.*)$': '<rootDir>/test/$1',
     '^@/(.*)$': '<rootDir>/src/$1',
-    '\\.(css|sass|scss)$': 'identity-obj-proxy'
+    // 'vuetify/lib': '<rootDir>/node_modules/vuetify/lib', // use pre-compiled Vuetify in tests
+    '\\.(css|sass|scss)$': 'identity-obj-proxy',
   },
   transform: {
     '\\.(styl)$': 'jest-css-modules',
@@ -22,7 +23,7 @@ module.exports = {
     '!**/*.d.ts',
   ],
   transformIgnorePatterns: [
-    'node_modules/(?!vue-router)',
+    'node_modules/(?!vue-router|vuetify)',
   ],
   snapshotSerializers: [
     'jest-serializer-html',
@@ -39,5 +40,5 @@ module.exports = {
       tsConfig: '<rootDir>/tsconfig.test.json',
       diagnostics: false,
     },
-  }
+  },
 }

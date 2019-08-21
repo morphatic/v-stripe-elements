@@ -34317,22 +34317,54 @@ function rebuildFunctionalSlots(slots, h) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _VStripeInput_sass__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./VStripeInput.sass */ "./src/VStripeInput.sass");
-/* harmony import */ var _VStripeInput_sass__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_VStripeInput_sass__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var vuetify_lib__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuetify/lib */ "./node_modules/vuetify/lib/index.js");
-/* harmony import */ var vuetify_lib_util_mixins__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vuetify/lib/util/mixins */ "./node_modules/vuetify/lib/util/mixins.js");
-// Styles
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "vue");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _VStripeInput_sass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./VStripeInput.sass */ "./src/VStripeInput.sass");
+/* harmony import */ var _VStripeInput_sass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_VStripeInput_sass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var vuetify_lib__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vuetify/lib */ "./node_modules/vuetify/lib/index.js");
+var __awaiter = undefined && undefined.__awaiter || function (thisArg, _arguments, P, generator) {
+  return new (P || (P = Promise))(function (resolve, reject) {
+    function fulfilled(value) {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function rejected(value) {
+      try {
+        step(generator["throw"](value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function step(result) {
+      result.done ? resolve(result.value) : new P(function (resolve) {
+        resolve(result.value);
+      }).then(fulfilled, rejected);
+    }
+
+    step((generator = generator.apply(thisArg, _arguments || [])).next());
+  });
+}; // Types
+
+
+ // Styles
+
  // Extensions and Components
 
  // Mixins
+// import mixins from 'vuetify/lib/util/mixins'
+// const base = mixins(VTextField)
+// Extend `base` to define the VStripeInput component
+// export default base.extend<ComponentOptions<VTextField>>({
 
-
-var base = Object(vuetify_lib_util_mixins__WEBPACK_IMPORTED_MODULE_2__["default"])(vuetify_lib__WEBPACK_IMPORTED_MODULE_1__["VTextField"]); // Extend `base` to define the VStripeInput component
-
-/* harmony default export */ __webpack_exports__["default"] = (base.extend({
+/* harmony default export */ __webpack_exports__["default"] = (vue__WEBPACK_IMPORTED_MODULE_0___default.a.extend({
   name: 'v-stripe-input',
-  "extends": vuetify_lib__WEBPACK_IMPORTED_MODULE_1__["VTextField"],
-  inheritAttrs: false,
+  "extends": vuetify_lib__WEBPACK_IMPORTED_MODULE_2__["VTextField"],
+  inheritAttrs: true,
   props: {
     apiKey: {
       type: String,
@@ -34347,6 +34379,20 @@ var base = Object(vuetify_lib_util_mixins__WEBPACK_IMPORTED_MODULE_2__["default"
     iconStyle: {
       type: String,
       "default": 'default'
+    },
+    nameAndAddress: {
+      type: Object,
+      "default": function _default() {
+        return {
+          name: '',
+          address_line1: '',
+          address_line2: '',
+          address_city: '',
+          address_state: '',
+          address_zip: '',
+          address_country: ''
+        };
+      }
     },
     zip: {
       type: String,
@@ -34365,7 +34411,7 @@ var base = Object(vuetify_lib_util_mixins__WEBPACK_IMPORTED_MODULE_2__["default"
   },
   computed: {
     classes: function classes() {
-      return Object.assign({}, vuetify_lib__WEBPACK_IMPORTED_MODULE_1__["VTextField"].options.computed.classes.call(this), {
+      return Object.assign({}, vuetify_lib__WEBPACK_IMPORTED_MODULE_2__["VTextField"].options.computed.classes.call(this), {
         'v-stripe-input': true
       });
     }
@@ -34430,7 +34476,43 @@ var base = Object(vuetify_lib_util_mixins__WEBPACK_IMPORTED_MODULE_2__["default"
   methods: {
     clearableCallback: function clearableCallback() {
       this.card.clear();
-      vuetify_lib__WEBPACK_IMPORTED_MODULE_1__["VTextField"].options.methods.clearableCallback.call(this);
+      vuetify_lib__WEBPACK_IMPORTED_MODULE_2__["VTextField"].options.methods.clearableCallback.call(this);
+    },
+
+    /**
+     * Converts the collected payment information into a single-use token
+     * that can safely be passed to your backend API server where a
+     * payment request can be processed.
+     * See {@link|https://stripe.com/docs/stripe-js/reference#stripe-create-token}
+     */
+    createToken: function createToken() {
+      return __awaiter(this, void 0, void 0,
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee() {
+        var _ref, token, error;
+
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.next = 2;
+                return this.stripe.createToken(this.card, this.nameAndAddress);
+
+              case 2:
+                _ref = _context.sent;
+                token = _ref.token;
+                error = _ref.error;
+
+                if (!error) {// do something
+                }
+
+              case 6:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
     },
 
     /**
@@ -34473,7 +34555,7 @@ var base = Object(vuetify_lib_util_mixins__WEBPACK_IMPORTED_MODULE_2__["default"
      */
     genProgress: function genProgress() {
       if (this.loading === false && this.isReady) return null;
-      return this.$slots.progress || this.$createElement(vuetify_lib__WEBPACK_IMPORTED_MODULE_1__["VProgressLinear"], {
+      return this.$slots.progress || this.$createElement(vuetify_lib__WEBPACK_IMPORTED_MODULE_2__["VProgressLinear"], {
         props: {
           absolute: true,
           color: this.loading === true || this.loading === '' ? this.color || 'primary' : this.loading || 'primary',
@@ -34579,6 +34661,54 @@ var base = Object(vuetify_lib_util_mixins__WEBPACK_IMPORTED_MODULE_2__["default"
     setLabelWidth: function setLabelWidth() {
       if (!this.outlined) return;
       this.labelWidth = this.$refs.label.offsetWidth * 0.75 + 6;
+    },
+    verifyCardInfo: function verifyCardInfo() {
+      return __awaiter(this, void 0, void 0,
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee2() {
+        var _ref2, source, error;
+
+        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                if (this.okToSubmit) {
+                  _context2.next = 2;
+                  break;
+                }
+
+                return _context2.abrupt("return");
+
+              case 2:
+                _context2.next = 4;
+                return this.stripe.createSource(this.card, {
+                  currency: 'usd',
+                  metadata: this.meta,
+                  owner: this.owner,
+                  usage: 'reusable'
+                });
+
+              case 4:
+                _ref2 = _context2.sent;
+                source = _ref2.source;
+                error = _ref2.error;
+
+                // if there was a problem
+                if (error) {
+                  // do something
+                  console.log(error);
+                } else {
+                  // payment method verified successfully
+                  this.$emit('cardVerified', source);
+                }
+
+              case 8:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this);
+      }));
     }
   }
 }));
