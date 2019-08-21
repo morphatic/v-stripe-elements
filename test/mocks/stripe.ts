@@ -16,7 +16,7 @@ function Stripe(publicKey: string, options?: stripe.StripeOptions): stripe.Strip
       used: false,
     }
     // const error = { type: 'invalid_request_error', charge: '', message: 'Not implemented' }
-    return Promise.resolve({ token, error: null })
+    return Promise.resolve({ token, error: undefined })
   }
 
   // createSource(element: stripe.elements.Element, options?: { owner?: stripe.OwnerInfo }): Promise<stripe.SourceResponse>
@@ -81,8 +81,14 @@ function Stripe(publicKey: string, options?: stripe.StripeOptions): stripe.Strip
   function elements (opts: stripe.elements.ElementsCreateOptions): stripe.elements.Elements {
     return {
       create: (type: string, opts: stripe.elements.ElementsOptions = {}): stripe.elements.Element => {
-        switch (type) {
-          case 'card':
+        // switch (type) {
+        //   case 'card':
+        //   case 'cardNumber':
+        //   case 'cardExpiry':
+        //   case 'cardCvc':
+        //   case 'paymentRequestButton':
+        //   case 'iban':
+        //   case 'idealBank':
             return {
               mount(domElement: any): void {},
               on(
@@ -97,16 +103,7 @@ function Stripe(publicKey: string, options?: stripe.StripeOptions): stripe.Strip
               destroy(): void {},
               update(options: stripe.elements.ElementsOptions): void {},  
             }
-          case 'cardNumber':
-          case 'cardExpiry':
-          case 'cardCvc':
-          case 'paymentRequestButton':
-          case 'iban':
-          case 'idealBank':
-            return null
-          default:
-            return null // ERROR: `type` MUST be one of the enumerated types
-        }
+        // }
       }
     }
   }

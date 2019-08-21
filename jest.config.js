@@ -1,38 +1,7 @@
 module.exports = {
-  verbose: false,
-  // runs in a newer JSDOM environment than what ships with jest
-  testEnvironment: 'jest-environment-jsdom-fourteen',
-  roots: ['<rootDir>/src'],
-  setupFilesAfterEnv: ['<rootDir>/test/index.ts'],
-  moduleFileExtensions: ['ts', 'js'],
-  moduleDirectories: ['node_modules'],
-  moduleNameMapper: {
-    '^@/test$': '<rootDir>/test/index.js',
-    '^@/test/(.*)$': '<rootDir>/test/$1',
-    '^@/(.*)$': '<rootDir>/src/$1',
-    // 'vuetify/lib': '<rootDir>/node_modules/vuetify/lib', // use pre-compiled Vuetify in tests
-    '\\.(css|sass|scss)$': 'identity-obj-proxy',
-  },
-  transform: {
-    '\\.(styl)$': 'jest-css-modules',
-    '\\.(sass|scss)$': 'jest-css-modules',
-    '.*\\.(j|t)s$': 'ts-jest',
-  },
   collectCoverageFrom: [
     'src/**/*.{js,ts,tsx}',
     '!**/*.d.ts',
-  ],
-  transformIgnorePatterns: [
-    'node_modules/(?!vue-router|vuetify)',
-  ],
-  snapshotSerializers: [
-    'jest-serializer-html',
-  ],
-  testMatch: [
-    // Default
-    '**/test/**/*.js',
-    '**/__tests__/**/*.spec.js',
-    '**/__tests__/**/*.spec.ts',
   ],
   globals: {
     'ts-jest': {
@@ -41,4 +10,23 @@ module.exports = {
       diagnostics: false,
     },
   },
+  moduleFileExtensions: ['ts', 'js'],
+  moduleNameMapper: {
+    '\\.(css|sass|scss)$': 'identity-obj-proxy',
+  },
+  preset: 'ts-jest/presets/js-with-ts',
+  setupFilesAfterEnv: ['<rootDir>/test/index.ts'],
+  snapshotSerializers: [
+    'jest-serializer-html',
+  ],
+  testEnvironment: 'jest-environment-jsdom-fourteen',
+  transform: {
+    '\\.(sass|scss)$': 'jest-css-modules',
+    '.*\\.js$': 'babel-jest',
+    '.*\\.ts$': 'ts-jest',
+  },
+  transformIgnorePatterns: [
+    'node_modules/(?!vuetify)',
+  ],
+  verbose: true, // set to false unless debugging
 }

@@ -10,16 +10,10 @@ import './VStripeInput.sass'
 // @ts-ignore
 import { VProgressLinear, VTextField } from 'vuetify/lib'
 
-// Mixins
-// @ts-ignore
-// import mixins from 'vuetify/lib/util/mixins'
-// const baseMixins = mixins(VTextField)
-
 // Extend VTextField to define the VStripeInput component
 export default Vue.extend({
   name: 'v-stripe-input',
-  extends: VTextField,
-  // mixins: mixins(VTextField),
+  mixins: [VTextField],
   inheritAttrs: true,
   props: {
     apiKey: {
