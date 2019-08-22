@@ -1,22 +1,8 @@
-// import { PropOptions } from 'vue'
-// export interface ValidatableProps {
-//   disabled: PropOptions;
-// }
+import Vue from 'vue'
+import { VuetifyObject } from 'vuetify/types'
 
-// export interface VInputProps extends ValidatableProps {
-
-// }
-
-// export interface VTextFieldProps extends VInputProps {
-
-// }
-
-// export interface VTextFieldData {
-//   badInput?: Boolean;
-//   labelWidth?: Number;
-//   prefixWidth?: Number;
-//   prependWidth?: Number;
-//   initialValue?: String | null;
-//   isBooted?: Boolean;
-//   isClearing?: Boolean;
-// }
+declare module 'vue/types/vue' {
+  export interface Vue {
+    $vuetify: VuetifyObject
+  }
+}

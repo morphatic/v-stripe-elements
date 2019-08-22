@@ -23,15 +23,14 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-// Mixins
-// import mixins from 'vuetify/lib/util/mixins'
-// const base = mixins(VTextField)
-// Extend `base` to define the VStripeInput component
-// export default base.extend<ComponentOptions<VTextField>>({
-var _default2 = _vue["default"].extend({
+// Create Base Mixins and Properties
+var base = _vue["default"].extend({
+  mixins: [_lib.VTextField]
+}); // Extend VTextField to define the VStripeInput component
+
+
+var _default2 = base.extend().extend({
   name: 'v-stripe-input',
-  "extends": _lib.VTextField,
-  inheritAttrs: true,
   props: {
     apiKey: {
       type: String,
@@ -47,7 +46,7 @@ var _default2 = _vue["default"].extend({
       type: String,
       "default": 'default'
     },
-    nameAndAddress: {
+    tokenOptions: {
       type: Object,
       "default": function _default() {
         return {
@@ -69,7 +68,6 @@ var _default2 = _vue["default"].extend({
   data: function data() {
     return {
       card: null,
-      cardError: null,
       elements: null,
       isReady: false,
       okToSubmit: false,
@@ -84,18 +82,18 @@ var _default2 = _vue["default"].extend({
     }
   },
   watch: {
-    isDark: function isDark(newVal, oldVal) {
-      if (newVal !== oldVal && this.card !== null) {
+    isDark: function isDark(val, oldVal) {
+      if (val !== oldVal && this.card !== null) {
         var style = this.genStyle(this.font, this.$vuetify.theme.currentTheme, this.$vuetify.theme.dark);
         this.card.update({
           style: style
         });
       }
     },
-    isDisabled: function isDisabled(disabled, oldVal) {
-      if (disabled !== oldVal) {
+    isDisabled: function isDisabled(val, oldVal) {
+      if (val !== oldVal && this.card !== null) {
         this.card.update({
-          disabled: disabled
+          disabled: val
         });
       }
     }
@@ -113,36 +111,40 @@ var _default2 = _vue["default"].extend({
       hideIcon: this.hideIcon,
       hidePostalCode: this.hidePostalCode,
       iconStyle: this.iconStyle,
-      style: this.genStyle(this.font, this.$vuetify.theme.currentTheme, this.$vuetify.theme.dark),
-      value: {
-        postalCode: this.zip
-      }
+      style: this.genStyle(this.font, this.$vuetify.theme.currentTheme, this.$vuetify.theme.dark)
     };
+    this.zip && (cardProps.value = {
+      postalCode: this.zip
+    });
     this.loadStripe() // initialize the Stripe.js object
     .then(function () {
       _this.stripe = Stripe(_this.apiKey);
     }) // eslint-disable-line no-undef
     // then create a Stripe elements generator
     .then(function () {
-      return _this.stripe.elements(_this.genFont(_this.font));
-    }) // then create a card element
-    .then(function (elements) {
-      return elements.create('card', cardProps);
-    }) // then setup card events and mount the card
-    .then(function (card) {
-      _this.card = card;
-      card.on('blur', _this.onCardBlur);
-      card.on('change', _this.onCardChange);
-      card.on('focus', _this.onCardFocus);
-      card.on('ready', _this.onCardReady);
-      card.mount("#".concat(_this.computedId));
+      _this.elements = _this.stripe && _this.stripe.elements(_this.genFont(_this.font));
+    }) // then create a card element, setup card events, and mount the card
+    .then(function () {
+      _this.card = _this.elements && _this.elements.create('card', cardProps);
+
+      if (_this.card !== null) {
+        _this.card.on('blur', _this.onCardBlur);
+
+        _this.card.on('change', _this.onCardChange);
+
+        _this.card.on('focus', _this.onCardFocus);
+
+        _this.card.on('ready', _this.onCardReady);
+
+        _this.card.mount("#".concat(_this.computedId));
+      }
     })["catch"](function (err) {
       console.log(err);
     });
   },
   methods: {
     clearableCallback: function clearableCallback() {
-      this.card.clear();
+      this.card !== null && this.card.clear();
 
       _lib.VTextField.options.methods.clearableCallback.call(this);
     },
@@ -163,18 +165,28 @@ var _default2 = _vue["default"].extend({
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                _context.next = 2;
-                return this.stripe.createToken(this.card, this.nameAndAddress);
+                if (!(this.stripe === null || this.card === null)) {
+                  _context.next = 2;
+                  break;
+                }
+
+                return _context.abrupt("return");
 
               case 2:
+                _context.next = 4;
+                return this.stripe.createToken(this.card, this.tokenOptions);
+
+              case 4:
                 _ref = _context.sent;
                 token = _ref.token;
                 error = _ref.error;
 
                 if (!error) {// do something
+                } else {
+                  this.$emit('input', token);
                 }
 
-              case 6:
+              case 8:
               case "end":
                 return _context.stop();
             }
@@ -241,6 +253,8 @@ var _default2 = _vue["default"].extend({
 
     /**
      * Generate styles for Stripe elements
+     *
+     * @param   {string} font
      */
     genStyle: function genStyle(font, theme) {
       var dark = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
@@ -311,7 +325,7 @@ var _default2 = _vue["default"].extend({
     onCardChange: function onCardChange(e) {
       if (e.error) {
         // handle card errors
-        this.errorBucket.push(e.error.message);
+        e.error.message && this.errorBucket.push(e.error.message);
       }
 
       if (e.complete) {
@@ -329,7 +343,7 @@ var _default2 = _vue["default"].extend({
     },
     onCardReady: function onCardReady(e) {
       this.isReady = true;
-      this.autofocus && this.card.focus();
+      this.autofocus && this.card !== null && this.card.focus();
       this.$emit('ready', e);
     },
     setLabelWidth: function setLabelWidth() {
@@ -340,48 +354,15 @@ var _default2 = _vue["default"].extend({
       var _verifyCardInfo = _asyncToGenerator(
       /*#__PURE__*/
       regeneratorRuntime.mark(function _callee2() {
-        var _ref2, source, error;
-
         return regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                if (this.okToSubmit) {
-                  _context2.next = 2;
-                  break;
-                }
-
-                return _context2.abrupt("return");
-
-              case 2:
-                _context2.next = 4;
-                return this.stripe.createSource(this.card, {
-                  currency: 'usd',
-                  metadata: this.meta,
-                  owner: this.owner,
-                  usage: 'reusable'
-                });
-
-              case 4:
-                _ref2 = _context2.sent;
-                source = _ref2.source;
-                error = _ref2.error;
-
-                // if there was a problem
-                if (error) {
-                  // do something
-                  console.log(error);
-                } else {
-                  // payment method verified successfully
-                  this.$emit('cardVerified', source);
-                }
-
-              case 8:
               case "end":
                 return _context2.stop();
             }
           }
-        }, _callee2, this);
+        }, _callee2);
       }));
 
       function verifyCardInfo() {
@@ -390,7 +371,15 @@ var _default2 = _vue["default"].extend({
 
       return verifyCardInfo;
     }()
-  }
+  } //  as ComponentOptions<
+  //   Vue,
+  //   DefaultData<Vue>,
+  //   DefaultMethods<Vue>,
+  //   DefaultComputed,
+  //   PropsDefinition<Record<string, any>>,
+  //   Record<string, any>
+  // >
+
 });
 
 exports["default"] = _default2;

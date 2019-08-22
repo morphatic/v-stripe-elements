@@ -618,6 +618,10 @@ const baseMixins = Object(_util_mixins__WEBPACK_IMPORTED_MODULE_8__["default"])(
     },
 
     hideShadow() {
+      if (this.elevateOnScroll && this.isExtended) {
+        return this.currentScroll < this.computedScrollThreshold;
+      }
+
       if (this.elevateOnScroll) {
         return this.currentScroll === 0 || this.computedTransform < 0;
       }
@@ -8211,6 +8215,9 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
     },
 
     isMobile() {
+      // Guard against SSR render
+      // https://github.com/vuetifyjs/vuetify/issues/7410
+      if (this.$vuetify.breakpoint.width === 0) return false;
       return this.$vuetify.breakpoint.width < this.mobileBreakpoint;
     },
 
@@ -8570,7 +8577,9 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
       const children = [Object(_util_helpers__WEBPACK_IMPORTED_MODULE_13__["getSlot"])(this, 'footer', data, true)];
 
       if (!this.hideDefaultFooter) {
-        children.push(this.$createElement(_VDataIterator__WEBPACK_IMPORTED_MODULE_2__["VDataFooter"], data));
+        children.push(this.$createElement(_VDataIterator__WEBPACK_IMPORTED_MODULE_2__["VDataFooter"], { ...data,
+          scopedSlots: Object(_util_helpers__WEBPACK_IMPORTED_MODULE_13__["getPrefixedScopedSlots"])('footer.', this.$scopedSlots)
+        }));
       }
 
       return children;
@@ -11073,8 +11082,8 @@ const baseMixins = Object(_util_mixins__WEBPACK_IMPORTED_MODULE_11__["default"])
 
       this.$emit('click:outside');
 
-      if (this.persistent) {
-        if (!this.noClickAnimation && this.overlay === target) this.animateClick();
+      if (this.persistent && this.overlay) {
+        if (!this.noClickAnimation && (this.overlay.$el === target || this.overlay.$el.contains(target))) this.animateClick();
         return false;
       } // close dialog if !persistent, clicked outside and we're the topmost dialog.
       // Since this should only be called in a capture event (bottom up), we shouldn't need to stop propagation
@@ -11869,7 +11878,13 @@ __webpack_require__.r(__webpack_exports__);
 
     genInput() {
       const input = _VTextField__WEBPACK_IMPORTED_MODULE_1__["default"].options.methods.genInput.call(this);
-      input.data.domProps.value = this.internalFileInput;
+      input.data.domProps.value = this.internalFileInput; // This solves an issue in Safari where
+      // nothing happens when adding a file
+      // do to the input event not firing
+      // https://github.com/vuetifyjs/vuetify/issues/7941
+
+      delete input.data.on.input;
+      input.data.on.change = this.onInput;
       return [this.genSelections(), input];
     },
 
@@ -22766,7 +22781,7 @@ const dirtyTypes = ['color', 'file', 'time', 'date', 'datetime-local', 'week', '
     },
 
     onClick() {
-      if (this.isFocused || this.disabled) return;
+      if (this.isFocused || this.disabled || !this.$refs.input) return;
       this.$refs.input.focus();
     },
 
@@ -26932,7 +26947,7 @@ class Vuetify {
 }
 Vuetify.install = _install__WEBPACK_IMPORTED_MODULE_0__["install"];
 Vuetify.installed = false;
-Vuetify.version = "2.0.7";
+Vuetify.version = "2.0.10";
 //# sourceMappingURL=framework.js.map
 
 /***/ }),
@@ -34322,6 +34337,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _VStripeInput_sass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./VStripeInput.sass */ "./src/VStripeInput.sass");
 /* harmony import */ var _VStripeInput_sass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_VStripeInput_sass__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var vuetify_lib__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vuetify/lib */ "./node_modules/vuetify/lib/index.js");
+var __assign = undefined && undefined.__assign || function () {
+  __assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+
+      for (var p in s) {
+        if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+      }
+    }
+
+    return t;
+  };
+
+  return __assign.apply(this, arguments);
+};
+
 var __awaiter = undefined && undefined.__awaiter || function (thisArg, _arguments, P, generator) {
   return new (P || (P = Promise))(function (resolve, reject) {
     function fulfilled(value) {
@@ -34348,23 +34379,134 @@ var __awaiter = undefined && undefined.__awaiter || function (thisArg, _argument
 
     step((generator = generator.apply(thisArg, _arguments || [])).next());
   });
-}; // Types
+};
+
+var __generator = undefined && undefined.__generator || function (thisArg, body) {
+  var _ = {
+    label: 0,
+    sent: function sent() {
+      if (t[0] & 1) throw t[1];
+      return t[1];
+    },
+    trys: [],
+    ops: []
+  },
+      f,
+      y,
+      t,
+      g;
+  return g = {
+    next: verb(0),
+    "throw": verb(1),
+    "return": verb(2)
+  }, typeof Symbol === "function" && (g[Symbol.iterator] = function () {
+    return this;
+  }), g;
+
+  function verb(n) {
+    return function (v) {
+      return step([n, v]);
+    };
+  }
+
+  function step(op) {
+    if (f) throw new TypeError("Generator is already executing.");
+
+    while (_) {
+      try {
+        if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+        if (y = 0, t) op = [op[0] & 2, t.value];
+
+        switch (op[0]) {
+          case 0:
+          case 1:
+            t = op;
+            break;
+
+          case 4:
+            _.label++;
+            return {
+              value: op[1],
+              done: false
+            };
+
+          case 5:
+            _.label++;
+            y = op[1];
+            op = [0];
+            continue;
+
+          case 7:
+            op = _.ops.pop();
+
+            _.trys.pop();
+
+            continue;
+
+          default:
+            if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
+              _ = 0;
+              continue;
+            }
+
+            if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
+              _.label = op[1];
+              break;
+            }
+
+            if (op[0] === 6 && _.label < t[1]) {
+              _.label = t[1];
+              t = op;
+              break;
+            }
+
+            if (t && _.label < t[2]) {
+              _.label = t[2];
+
+              _.ops.push(op);
+
+              break;
+            }
+
+            if (t[2]) _.ops.pop();
+
+            _.trys.pop();
+
+            continue;
+        }
+
+        op = body.call(thisArg, _);
+      } catch (e) {
+        op = [6, e];
+        y = 0;
+      } finally {
+        f = t = 0;
+      }
+    }
+
+    if (op[0] & 5) throw op[1];
+    return {
+      value: op[0] ? op[1] : void 0,
+      done: true
+    };
+  }
+}; // Imported Types
+/// <reference path="../node_modules/vuetify/src/globals.d.ts" />
 
 
  // Styles
 
  // Extensions and Components
+// @ts-ignore
 
- // Mixins
-// import mixins from 'vuetify/lib/util/mixins'
-// const base = mixins(VTextField)
-// Extend `base` to define the VStripeInput component
-// export default base.extend<ComponentOptions<VTextField>>({
+ // Create Base Mixins and Properties
 
-/* harmony default export */ __webpack_exports__["default"] = (vue__WEBPACK_IMPORTED_MODULE_0___default.a.extend({
+var base = vue__WEBPACK_IMPORTED_MODULE_0___default.a.extend({
+  mixins: [vuetify_lib__WEBPACK_IMPORTED_MODULE_2__["VTextField"]]
+}); // Extend VTextField to define the VStripeInput component
+
+/* harmony default export */ __webpack_exports__["default"] = (base.extend().extend({
   name: 'v-stripe-input',
-  "extends": vuetify_lib__WEBPACK_IMPORTED_MODULE_2__["VTextField"],
-  inheritAttrs: true,
   props: {
     apiKey: {
       type: String,
@@ -34380,7 +34522,7 @@ var __awaiter = undefined && undefined.__awaiter || function (thisArg, _argument
       type: String,
       "default": 'default'
     },
-    nameAndAddress: {
+    tokenOptions: {
       type: Object,
       "default": function _default() {
         return {
@@ -34402,7 +34544,6 @@ var __awaiter = undefined && undefined.__awaiter || function (thisArg, _argument
   data: function data() {
     return {
       card: null,
-      cardError: null,
       elements: null,
       isReady: false,
       okToSubmit: false,
@@ -34411,32 +34552,32 @@ var __awaiter = undefined && undefined.__awaiter || function (thisArg, _argument
   },
   computed: {
     classes: function classes() {
-      return Object.assign({}, vuetify_lib__WEBPACK_IMPORTED_MODULE_2__["VTextField"].options.computed.classes.call(this), {
+      return __assign({}, vuetify_lib__WEBPACK_IMPORTED_MODULE_2__["VTextField"].options.computed.classes.call(this), {
         'v-stripe-input': true
       });
     }
   },
   watch: {
-    isDark: function isDark(newVal, oldVal) {
-      if (newVal !== oldVal && this.card !== null) {
+    isDark: function isDark(val, oldVal) {
+      if (val !== oldVal && this.card !== null) {
         var style = this.genStyle(this.font, this.$vuetify.theme.currentTheme, this.$vuetify.theme.dark);
         this.card.update({
           style: style
         });
       }
     },
-    isDisabled: function isDisabled(disabled, oldVal) {
-      if (disabled !== oldVal) {
+    isDisabled: function isDisabled(val, oldVal) {
+      if (val !== oldVal && this.card !== null) {
         this.card.update({
-          disabled: disabled
+          disabled: val
         });
       }
     }
   },
   mounted: function mounted() {
-    var _this = this;
+    var _this = this; // Handle tasks NOT related to actual DOM rendering or manipulation
 
-    // Handle tasks NOT related to actual DOM rendering or manipulation
+
     var cardProps = {
       classes: {
         focus: 'focus',
@@ -34446,36 +34587,40 @@ var __awaiter = undefined && undefined.__awaiter || function (thisArg, _argument
       hideIcon: this.hideIcon,
       hidePostalCode: this.hidePostalCode,
       iconStyle: this.iconStyle,
-      style: this.genStyle(this.font, this.$vuetify.theme.currentTheme, this.$vuetify.theme.dark),
-      value: {
-        postalCode: this.zip
-      }
+      style: this.genStyle(this.font, this.$vuetify.theme.currentTheme, this.$vuetify.theme.dark)
     };
+    this.zip && (cardProps.value = {
+      postalCode: this.zip
+    });
     this.loadStripe() // initialize the Stripe.js object
     .then(function () {
       _this.stripe = Stripe(_this.apiKey);
     }) // eslint-disable-line no-undef
     // then create a Stripe elements generator
     .then(function () {
-      return _this.stripe.elements(_this.genFont(_this.font));
-    }) // then create a card element
-    .then(function (elements) {
-      return elements.create('card', cardProps);
-    }) // then setup card events and mount the card
-    .then(function (card) {
-      _this.card = card;
-      card.on('blur', _this.onCardBlur);
-      card.on('change', _this.onCardChange);
-      card.on('focus', _this.onCardFocus);
-      card.on('ready', _this.onCardReady);
-      card.mount("#".concat(_this.computedId));
+      _this.elements = _this.stripe && _this.stripe.elements(_this.genFont(_this.font));
+    }) // then create a card element, setup card events, and mount the card
+    .then(function () {
+      _this.card = _this.elements && _this.elements.create('card', cardProps);
+
+      if (_this.card !== null) {
+        _this.card.on('blur', _this.onCardBlur);
+
+        _this.card.on('change', _this.onCardChange);
+
+        _this.card.on('focus', _this.onCardFocus);
+
+        _this.card.on('ready', _this.onCardReady);
+
+        _this.card.mount("#" + _this.computedId);
+      }
     })["catch"](function (err) {
       console.log(err);
     });
   },
   methods: {
     clearableCallback: function clearableCallback() {
-      this.card.clear();
+      this.card !== null && this.card.clear();
       vuetify_lib__WEBPACK_IMPORTED_MODULE_2__["VTextField"].options.methods.clearableCallback.call(this);
     },
 
@@ -34486,33 +34631,33 @@ var __awaiter = undefined && undefined.__awaiter || function (thisArg, _argument
      * See {@link|https://stripe.com/docs/stripe-js/reference#stripe-create-token}
      */
     createToken: function createToken() {
-      return __awaiter(this, void 0, void 0,
-      /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee() {
-        var _ref, token, error;
+      return __awaiter(this, void 0, void 0, function () {
+        var _a, token, error;
 
-        return regeneratorRuntime.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                _context.next = 2;
-                return this.stripe.createToken(this.card, this.nameAndAddress);
+        return __generator(this, function (_b) {
+          switch (_b.label) {
+            case 0:
+              if (this.stripe === null || this.card === null) return [2
+              /*return*/
+              ];
+              return [4
+              /*yield*/
+              , this.stripe.createToken(this.card, this.tokenOptions)];
 
-              case 2:
-                _ref = _context.sent;
-                token = _ref.token;
-                error = _ref.error;
+            case 1:
+              _a = _b.sent(), token = _a.token, error = _a.error;
 
-                if (!error) {// do something
-                }
+              if (!error) {// do something
+              } else {
+                this.$emit('input', token);
+              }
 
-              case 6:
-              case "end":
-                return _context.stop();
-            }
+              return [2
+              /*return*/
+              ];
           }
-        }, _callee, this);
-      }));
+        });
+      });
     },
 
     /**
@@ -34526,7 +34671,7 @@ var __awaiter = undefined && undefined.__awaiter || function (thisArg, _argument
      * @returns {object}      An object in the form required by `Stripe.elements()`
      */
     genFont: function genFont(font) {
-      var cssSrc = this.isURL(font) ? font : "https://fonts.googleapis.com/css?family=".concat(encodeURI(font), ":400");
+      var cssSrc = this.isURL(font) ? font : "https://fonts.googleapis.com/css?family=" + encodeURI(font) + ":400";
       return {
         fonts: [{
           cssSrc: cssSrc
@@ -34567,13 +34712,18 @@ var __awaiter = undefined && undefined.__awaiter || function (thisArg, _argument
 
     /**
      * Generate styles for Stripe elements
+     *
+     * @param   {string} font
      */
-    genStyle: function genStyle(font, theme) {
-      var dark = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+    genStyle: function genStyle(font, theme, dark) {
+      if (dark === void 0) {
+        dark = false;
+      }
+
       return {
         base: {
           color: dark ? '#ffffff' : '#000000',
-          fontFamily: "'".concat(font, "', sans-serif"),
+          fontFamily: "'" + font + "', sans-serif",
           fontSize: '16px',
           fontSmoothing: 'antialiased',
           iconColor: dark ? '#eceff1' : '#455a64',
@@ -34637,7 +34787,7 @@ var __awaiter = undefined && undefined.__awaiter || function (thisArg, _argument
     onCardChange: function onCardChange(e) {
       if (e.error) {
         // handle card errors
-        this.errorBucket.push(e.error.message);
+        e.error.message && this.errorBucket.push(e.error.message);
       }
 
       if (e.complete) {
@@ -34655,7 +34805,7 @@ var __awaiter = undefined && undefined.__awaiter || function (thisArg, _argument
     },
     onCardReady: function onCardReady(e) {
       this.isReady = true;
-      this.autofocus && this.card.focus();
+      this.autofocus && this.card !== null && this.card.focus();
       this.$emit('ready', e);
     },
     setLabelWidth: function setLabelWidth() {
@@ -34663,54 +34813,23 @@ var __awaiter = undefined && undefined.__awaiter || function (thisArg, _argument
       this.labelWidth = this.$refs.label.offsetWidth * 0.75 + 6;
     },
     verifyCardInfo: function verifyCardInfo() {
-      return __awaiter(this, void 0, void 0,
-      /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee2() {
-        var _ref2, source, error;
-
-        return regeneratorRuntime.wrap(function _callee2$(_context2) {
-          while (1) {
-            switch (_context2.prev = _context2.next) {
-              case 0:
-                if (this.okToSubmit) {
-                  _context2.next = 2;
-                  break;
-                }
-
-                return _context2.abrupt("return");
-
-              case 2:
-                _context2.next = 4;
-                return this.stripe.createSource(this.card, {
-                  currency: 'usd',
-                  metadata: this.meta,
-                  owner: this.owner,
-                  usage: 'reusable'
-                });
-
-              case 4:
-                _ref2 = _context2.sent;
-                source = _ref2.source;
-                error = _ref2.error;
-
-                // if there was a problem
-                if (error) {
-                  // do something
-                  console.log(error);
-                } else {
-                  // payment method verified successfully
-                  this.$emit('cardVerified', source);
-                }
-
-              case 8:
-              case "end":
-                return _context2.stop();
-            }
-          }
-        }, _callee2, this);
-      }));
+      return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+          return [2
+          /*return*/
+          ];
+        });
+      });
     }
-  }
+  } //  as ComponentOptions<
+  //   Vue,
+  //   DefaultData<Vue>,
+  //   DefaultMethods<Vue>,
+  //   DefaultComputed,
+  //   PropsDefinition<Record<string, any>>,
+  //   Record<string, any>
+  // >
+
 }));
 
 /***/ }),
@@ -34727,13 +34846,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _VStripeInput__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./VStripeInput */ "./src/VStripeInput.ts");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VStripeInput", function() { return _VStripeInput__WEBPACK_IMPORTED_MODULE_0__["default"]; });
 
-// import { VueConstructor } from 'vue'
 
- // export default {
-//   install (Vue: VueConstructor, options = {}) {
-//     Vue.component('v-stripe-input', VStripeInput)
-//   },
-// }
 
 /* harmony default export */ __webpack_exports__["default"] = (_VStripeInput__WEBPACK_IMPORTED_MODULE_0__["default"]);
 

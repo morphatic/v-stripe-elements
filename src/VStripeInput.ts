@@ -1,7 +1,8 @@
-// Types
+// Imported Types
+/// <reference path="../node_modules/vuetify/src/globals.d.ts" />
 import Vue, { VNode } from 'vue'
+// import { VuetifyObject } from 'vuetify/types'
 import { VuetifyThemeVariant } from 'vuetify/types/services/theme'
-// import { VStripeInput, VStripeInputData, VStripeInputProps } from '../types'
 
 // Styles
 import './VStripeInput.sass'
@@ -10,11 +11,39 @@ import './VStripeInput.sass'
 // @ts-ignore
 import { VProgressLinear, VTextField } from 'vuetify/lib'
 
+// Create Base Mixins and Properties
+const base = Vue.extend({ mixins: [VTextField] })
+interface options extends InstanceType<typeof base> {
+  autofocus: boolean
+  // apiKey: boolean
+  // card: stripe.elements.Element
+  color: string|null
+  computedId: string
+  disabled: boolean
+  errorBucket: string[]
+  // font: string
+  // hideIcon: boolean
+  // hidePostalCode: boolean
+  iconStyle: 'default'|'solid'
+  isFocused: boolean
+  labelWidth: number|string
+  lazyValue: any
+  loaderHeight: number|string
+  loading: string|boolean
+  $loadScript: (url: string) => Promise<boolean>
+  onCardBlur: stripe.elements.handler
+  onCardChange: stripe.elements.handler
+  onCardFocus: stripe.elements.handler
+  onCardReady: stripe.elements.handler
+  outlined: boolean
+  // tokenOptions: stripe.TokenOptions
+  $vuetify: any // VuetifyObject // actually importing the type causes errors for some reason
+  // zip: string
+}
+
 // Extend VTextField to define the VStripeInput component
-export default Vue.extend({
+export default base.extend<options>().extend({
   name: 'v-stripe-input',
-  mixins: [VTextField],
-  inheritAttrs: true,
   props: {
     apiKey: {
       type: String,
@@ -30,7 +59,7 @@ export default Vue.extend({
       type: String,
       default: 'default',
     },
-    nameAndAddress: {
+    tokenOptions: {
       type: Object,
       default: () => ({
         name: '',
@@ -46,16 +75,13 @@ export default Vue.extend({
       type: String,
       default: '',
     },
-    /**
-     * Props duplicated from VTextField to get rid of
-     *
-     */
-  }, // as VStripeInputProps
-  data: (): any/* VStripeInputData */ => ({
-    card: null,
+  },
+  data: () => ({
+    card: null as stripe.elements.Element | null,
+    elements: null as stripe.elements.Elements | null,
     isReady: false,
     okToSubmit: false,
-    stripe: null,
+    stripe: null as stripe.Stripe | null,
   }),
   computed: {
     classes (): object {
@@ -66,52 +92,50 @@ export default Vue.extend({
     },
   },
   watch: {
-    isDark (newVal: boolean, oldVal: boolean) {
-      if (newVal !== oldVal && this.card !== null) {
+    isDark (val: boolean, oldVal: boolean) {
+      if (val !== oldVal && this.card !== null) {
         const style = this.genStyle(this.font, this.$vuetify.theme.currentTheme, this.$vuetify.theme.dark)
         this.card.update({ style })
       }
     },
-    isDisabled (disabled: boolean, oldVal: boolean) {
-      if (disabled !== oldVal) {
-        this.card.update({ disabled })
+    isDisabled (val: boolean, oldVal: boolean) {
+      if (val !== oldVal && this.card !== null) {
+        this.card.update({ disabled: val })
       }
     },
   },
   mounted () {
     // Handle tasks NOT related to actual DOM rendering or manipulation
-    const cardProps = {
+    const cardProps: stripe.elements.ElementsOptions = {
       classes: { focus: 'focus', empty: 'empty' },
       disabled: this.disabled,
       hideIcon: this.hideIcon,
       hidePostalCode: this.hidePostalCode,
       iconStyle: this.iconStyle,
       style: this.genStyle(this.font, this.$vuetify.theme.currentTheme, this.$vuetify.theme.dark),
-      value: {
-        postalCode: this.zip,
-      },
     }
+    this.zip && (cardProps.value = { postalCode: this.zip })
     this.loadStripe()
       // initialize the Stripe.js object
       .then(() => { this.stripe = Stripe(this.apiKey) }) // eslint-disable-line no-undef
       // then create a Stripe elements generator
-      .then(() => this.stripe.elements(this.genFont(this.font)))
-      // then create a card element
-      .then((elements: stripe.elements.Elements) => elements.create('card', cardProps))
-      // then setup card events and mount the card
-      .then((card: stripe.elements.Element) => {
-        this.card = card
-        card.on('blur', this.onCardBlur)
-        card.on('change', this.onCardChange)
-        card.on('focus', this.onCardFocus)
-        card.on('ready', this.onCardReady)
-        card.mount(`#${this.computedId}`)
+      .then(() => { this.elements = this.stripe && this.stripe.elements(this.genFont(this.font)) })
+      // then create a card element, setup card events, and mount the card
+      .then(() => {
+        this.card = this.elements && this.elements.create('card', cardProps)
+        if (this.card !== null) {
+          this.card.on('blur', this.onCardBlur)
+          this.card.on('change', this.onCardChange)
+          this.card.on('focus', this.onCardFocus)
+          this.card.on('ready', this.onCardReady)
+          this.card.mount(`#${this.computedId}`)
+        }
       })
       .catch((err: Error) => { console.log(err) })
   },
   methods: {
     clearableCallback () {
-      this.card.clear()
+      this.card !== null && this.card.clear()
       VTextField.options.methods.clearableCallback.call(this)
     },
     /**
@@ -121,9 +145,10 @@ export default Vue.extend({
      * See {@link|https://stripe.com/docs/stripe-js/reference#stripe-create-token}
      */
     async createToken () {
+      if (this.stripe === null || this.card === null) return
       const { token, error } = await this.stripe.createToken(
         this.card,
-        this.nameAndAddress
+        this.tokenOptions
       )
       if (!error) {
         // do something
@@ -141,7 +166,7 @@ export default Vue.extend({
      * @param   {string} font The name of a Google font, or a URL to a valid font
      * @returns {object}      An object in the form required by `Stripe.elements()`
      */
-    genFont (font: string): object {
+    genFont (font: string): stripe.elements.ElementsCreateOptions {
       const cssSrc = this.isURL(font)
         ? font
         : `https://fonts.googleapis.com/css?family=${encodeURI(font)}:400`
@@ -245,7 +270,7 @@ export default Vue.extend({
     onCardChange (e: stripe.elements.ElementChangeResponse) {
       if (e.error) {
         // handle card errors
-        this.errorBucket.push(e.error.message)
+        e.error.message && this.errorBucket.push(e.error.message)
       }
       if (e.complete) {
         // handle card input is complete
@@ -261,32 +286,41 @@ export default Vue.extend({
     },
     onCardReady (e: stripe.elements.ElementChangeResponse) {
       this.isReady = true
-      this.autofocus && this.card.focus()
+      this.autofocus && this.card !== null && this.card.focus()
       this.$emit('ready', e)
     },
     setLabelWidth () {
       if (!this.outlined) return
-      this.labelWidth = this.$refs.label.offsetWidth * 0.75 + 6
+      this.labelWidth = (this.$refs.label as HTMLElement).offsetWidth * 0.75 + 6
     },
     async verifyCardInfo () {
-      // bail if we're not ready yet
-      if (!this.okToSubmit) return
+      // // bail if we're not ready yet
+      // if (!this.okToSubmit) return
 
-      // otherwise, submit info to Stripe
-      const { source, error } = await this.stripe.createSource(this.card, {
-        currency: 'usd',
-        metadata: this.meta,
-        owner: this.owner,
-        usage: 'reusable',
-      })
-      // if there was a problem
-      if (error) {
-        // do something
-        console.log(error)
-      } else {
-        // payment method verified successfully
-        this.$emit('cardVerified', source)
-      }
+      // // otherwise, submit info to Stripe
+      // const { source, error } = await this.stripe.createSource(this.card, {
+      //   currency: 'usd',
+      //   metadata: this.meta,
+      //   owner: this.owner,
+      //   usage: 'reusable',
+      // })
+      // // if there was a problem
+      // if (error) {
+      //   // do something
+      //   console.log(error)
+      // } else {
+      //   // payment method verified successfully
+      //   this.$emit('cardVerified', source)
+      // }
     },
   },
-})// as VStripeInput
+}
+//  as ComponentOptions<
+//   Vue,
+//   DefaultData<Vue>,
+//   DefaultMethods<Vue>,
+//   DefaultComputed,
+//   PropsDefinition<Record<string, any>>,
+//   Record<string, any>
+// >
+)
