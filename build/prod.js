@@ -37,12 +37,6 @@ module.exports = merge(baseWebpackConfig, {
       amd: 'vue',
       root: 'Vue',
     },
-    'vuetify/lib': {
-      commonjs: 'vuetify',
-      commonjs2: 'vuetify',
-      amd: 'vuetify',
-      root: 'Vuetify',
-    },
   },
   module: {
     rules: [

@@ -2,11 +2,12 @@ import Vue from 'vue'
 import App from './App'
 import Vuetify from 'vuetify'
 import LoadScript from 'vue-plugin-load-script'
-
+import VStripeElements from '../src'
 Vue.config.productionTip = false
 
 Vue.use(Vuetify)
 Vue.use(LoadScript)
+Vue.use(VStripeElements)
 
 const vuetify = new Vuetify({
   theme: {

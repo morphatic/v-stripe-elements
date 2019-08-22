@@ -1,5 +1,5 @@
 // Imported Types
-/// <reference path="../node_modules/vuetify/src/globals.d.ts" />
+/// <reference path="../node_modules/vuetify/src/globals.d.ts" /> // imported for the extend() overload
 import Vue, { VNode } from 'vue'
 import { VuetifyThemeVariant } from 'vuetify/types/services/theme'
 // import { VuetifyObject } from 'vuetify/types' // !this causes type errors if imported

@@ -5,7 +5,7 @@
       color="primary white--text"
     >
       <v-app-bar-nav-icon />
-      <v-toolbar-title>VStripeCard Demo</v-toolbar-title>
+      <v-toolbar-title>VStripeElements Demo</v-toolbar-title>
       <v-spacer />
       <v-toolbar-items>
         <v-switch
@@ -135,12 +135,12 @@
 </template>
 
 <script>
-  import { VStripeCard } from '../src/'
+  // import { VStripeCard } from '../src/'
 
   export default {
-    components: {
-      VStripeCard,
-    },
+    // components: {
+    //   VStripeCard,
+    // },
     data: () => ({
       apiKey: 'pk_test_TYooMQauvdEDq54NiTphI7jx',
       filled: false,
