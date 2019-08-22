@@ -4,6 +4,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/morphatic/v-stripe-elements/badge.svg?branch=master)](https://coveralls.io/github/morphatic/v-stripe-elements?branch=master)
 ![npm](https://img.shields.io/npm/v/@morphatic/v-stripe-elements.svg)
 ![MIT](https://img.shields.io/npm/l/@morphatic/v-stripe-elements.svg)
+[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
 A set of Vue components that styles [Stripe Elements](https://stripe.com/payments/elements) to match the [Vuetify UI library](https://vuetifyjs.com).
 
