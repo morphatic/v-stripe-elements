@@ -1,10 +1,10 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("vue"), require("vuetify/lib"));
+		module.exports = factory(require("vue"), require("vuetify"));
 	else if(typeof define === 'function' && define.amd)
-		define(["vue", "vuetify/lib"], factory);
+		define(["vue", "vuetify"], factory);
 	else if(typeof exports === 'object')
-		exports["VStripeElements"] = factory(require("vue"), require("vuetify/lib"));
+		exports["VStripeElements"] = factory(require("vue"), require("vuetify"));
 	else
 		root["VStripeElements"] = factory(root["Vue"], root["Vuetify"]);
 })(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_vue__, __WEBPACK_EXTERNAL_MODULE_vuetify_lib__) {
@@ -659,9 +659,9 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_vue__;
 /***/ }),
 
 /***/ "vuetify/lib":
-/*!**********************************************************************************************************!*\
-  !*** external {"commonjs":"vuetify/lib","commonjs2":"vuetify/lib","amd":"vuetify/lib","root":"Vuetify"} ***!
-  \**********************************************************************************************************/
+/*!**********************************************************************************************!*\
+  !*** external {"commonjs":"vuetify","commonjs2":"vuetify","amd":"vuetify","root":"Vuetify"} ***!
+  \**********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
