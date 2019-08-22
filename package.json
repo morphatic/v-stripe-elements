@@ -1,6 +1,6 @@
 {
   "name": "v-stripe-elements",
-  "version": "0.0.0",
+  "version": "0.0.0-development",
   "description": "A Vue component that styles Stripe Elements to match the Vuetify UI library.",
   "author": "Morgan Benton <morgan.benton@gmail.com> (https://morphatic.com)",
   "license": "MIT",
@@ -25,7 +25,7 @@
   "homepage": "https://github.com/morphatic/v-stripe-elements#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/morphatic/v-stripe-elements.git"
+    "url": "https://github.com/morphatic/v-stripe-elements.git"
   },
   "bugs": {
     "url": "https://github.com/morphatic/v-stripe-elements/issues"
@@ -46,6 +46,7 @@
     "prerelease:major": "yarn version --premajor && yarn publish --access public",
     "postversion": "yarn publish --access public",
     "preversion": "yarn build",
+    "release": "yarn run semantic-release",
     "release:patch": "yarn version --patch && yarn publish --access public",
     "release:minor": "yarn version --minor && yarn publish --access public",
     "release:major": "yarn version --major && yarn publish --access public",
@@ -55,7 +56,8 @@
     "test:watch": "yarn test --watch",
     "test:win32": "cross-env NODE_ENV=test jest -i",
     "tsc": "tsc",
-    "watch": "cross-env TARGET=development webpack --config build/dist.js --progress --hide-modules --watch"
+    "watch": "cross-env TARGET=development webpack --config build/dist.js --progress --hide-modules --watch",
+    "semantic-release": "semantic-release"
   },
   "peerDependencies": {
     "vue": "^2.6.10",
@@ -108,6 +110,7 @@
     "rimraf": "^3.0.0",
     "sass": "^1.22.10",
     "sass-loader": "^7.2.0",
+    "semantic-release": "^15.13.21",
     "shelljs": "^0.8.3",
     "style-loader": "^1.0.0",
     "terser-webpack-plugin": "^1.4.1",
