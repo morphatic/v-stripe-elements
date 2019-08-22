@@ -7,7 +7,7 @@ exports["default"] = void 0;
 
 var _vue = _interopRequireDefault(require("vue"));
 
-require("../src/VStripeInput.sass");
+require("../src/VStripeCard.sass");
 
 var _lib = require("vuetify/lib");
 
@@ -23,14 +23,14 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-// Create Base Mixins and Properties
+// Create Base Mixins and Define Custom Properties
 var base = _vue["default"].extend({
   mixins: [_lib.VTextField]
-}); // Extend VTextField to define the VStripeInput component
+}); // Extend VTextField to define the VStripeCard component
 
 
 var _default2 = base.extend().extend({
-  name: 'v-stripe-input',
+  name: 'v-stripe-card',
   props: {
     apiKey: {
       type: String,
@@ -77,21 +77,26 @@ var _default2 = base.extend().extend({
   computed: {
     classes: function classes() {
       return _objectSpread({}, _lib.VTextField.options.computed.classes.call(this), {
-        'v-stripe-input': true
+        'v-stripe-card': true
       });
     }
   },
   watch: {
     isDark: function isDark(val, oldVal) {
+      // if the theme changes and a card has already been initialized
       if (val !== oldVal && this.card !== null) {
-        var style = this.genStyle(this.font, this.$vuetify.theme.currentTheme, this.$vuetify.theme.dark);
+        // generate styles to match the theme
+        var style = this.genStyle(this.font, this.$vuetify.theme.currentTheme, this.$vuetify.theme.dark); // then update the card
+
         this.card.update({
           style: style
         });
       }
     },
     isDisabled: function isDisabled(val, oldVal) {
+      // if the disabled status changes and the card has already been initialized
       if (val !== oldVal && this.card !== null) {
+        // update its disabled status
         this.card.update({
           disabled: val
         });
@@ -104,8 +109,12 @@ var _default2 = base.extend().extend({
     // Handle tasks NOT related to actual DOM rendering or manipulation
     var cardProps = {
       classes: {
-        focus: 'focus',
-        empty: 'empty'
+        base: 'VStripeCard',
+        complete: 'VStripeCard--complete',
+        empty: 'VStripeCard--empty',
+        focus: 'VStripeCard--focus',
+        invalid: 'VStripeCard--invalid',
+        webkitAutofill: 'VStripeCard--webkit-autofill'
       },
       disabled: this.disabled,
       hideIcon: this.hideIcon,
@@ -308,13 +317,13 @@ var _default2 = base.extend().extend({
 
       if (typeof this.$loadScript === 'undefined') {
         // no
-        throw new Error('[VStripeInput Error]: Stripe is not available and could not be loaded. Please make sure that you have installed and configured all of the necessary dependencies to use this component.');
+        throw new Error('[VStripeCard Error]: Stripe is not available and could not be loaded. Please make sure that you have installed and configured all of the necessary dependencies to use this component.');
       } else {
         // yes, let's try to get Stripe
         return this.$loadScript('https://js.stripe.com/v3/').then(function () {
           return true;
         })["catch"](function (err) {
-          throw new Error('[VStripeInput Error] There was a problem loading Stripe: ' + err.message);
+          throw new Error('[VStripeCard Error] There was a problem loading Stripe: ' + err.message);
         });
       }
     },
@@ -383,4 +392,4 @@ var _default2 = base.extend().extend({
 });
 
 exports["default"] = _default2;
-//# sourceMappingURL=VStripeInput.js.map
+//# sourceMappingURL=VStripeCard.js.map

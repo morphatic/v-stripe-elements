@@ -1,13 +1,13 @@
 {
-  "name": "v-stripe-input",
+  "name": "v-stripe-elements",
   "version": "0.0.0",
   "description": "A Vue component that styles Stripe Elements to match the Vuetify UI library.",
   "author": "Morgan Benton <morgan.benton@gmail.com> (https://morphatic.com)",
   "license": "MIT",
-  "main": "dist/v-stripe-input.js",
-  "module": "dist/v-stripe-input.js",
-  "jsdelivr": "dist/v-stripe-input.js",
-  "unpkg": "dist/v-stripe-input.js",
+  "main": "dist/v-stripe-elements.js",
+  "module": "dist/v-stripe-elements.js",
+  "jsdelivr": "dist/v-stripe-elements.js",
+  "unpkg": "dist/v-stripe-elements.js",
   "types": "types/index.d.ts",
   "files": [
     "dist/",
@@ -22,17 +22,17 @@
     "vuetify",
     "vue"
   ],
-  "homepage": "https://github.com/morphatic/v-stripe-input#readme",
+  "homepage": "https://github.com/morphatic/v-stripe-elements#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/morphatic/v-stripe-input.git"
+    "url": "git+https://github.com/morphatic/v-stripe-elements.git"
   },
   "bugs": {
-    "url": "https://github.com/morphatic/v-stripe-input/issues"
+    "url": "https://github.com/morphatic/v-stripe-elements/issues"
   },
   "scripts": {
     "build": "concurrently \"yarn build:dist --no-progress\" \"yarn build:lib\" -n \"dist,lib\" --kill-others-on-fail -r && yarn build:json",
-    "build:dist": "rimraf dist && cross-env NODE_ENV=production webpack --config build/dist.js --progress --hide-modules",
+    "build:dist": "rimraf dist && cross-env NODE_ENV=production webpack --config build/dist.js --progress",
     "build:json": "echo \"JSON for tags and attributes should be generated manually. Don't forget!!!\"",
     "build:lib": "node build/lib.js",
     "changelog": "github_changelog_generator && git add CHANGELOG.md && git commit -am \"Updating changelog\"",
@@ -52,6 +52,10 @@
     "test:win32": "cross-env NODE_ENV=test jest -i",
     "tsc": "tsc",
     "watch": "cross-env TARGET=development webpack --config build/dist.js --progress --hide-modules --watch"
+  },
+  "peerDependencies": {
+    "vue": "^2.6.10",
+    "vuetify": "^2.0.10"
   },
   "devDependencies": {
     "@babel/cli": "^7.5.5",
@@ -107,12 +111,10 @@
     "typescript": "^3.5.3",
     "typestrict": "^1.0.2",
     "url-loader": "^2.1.0",
-    "vue": "^2.6.10",
     "vue-loader": "^15.7.1",
     "vue-meta": "^2.2.1",
     "vue-plugin-load-script": "^1.2.0",
     "vue-template-compiler": "^2.6.10",
-    "vuetify": "^2.0.10",
     "vuetify-loader": "^1.3.0",
     "webpack": "^4.39.2",
     "webpack-cli": "^3.3.6",

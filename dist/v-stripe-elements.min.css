@@ -1,0 +1,5 @@
+/*!
+* VStripeElements v0.0.0
+* Created by Morgan Benton <morgan.benton@gmail.com> (https://morphatic.com)
+* Released under the MIT License.
+*/.v-stripe-card .v-label{transform:translateY(-18px) scale(.75)}.v-stripe-card .VStripeCard{flex:1 1 auto;line-height:20px;padding:8px 0;max-width:100%;min-width:0;width:calc(100% - 30px);max-height:32px}.v-stripe-card.v-text-field--outlined .v-label{transform:translateY(-14px) scale(.75)}.v-stripe-card.v-text-field--outlined .v-label.v-label--active{transform:translateY(-24px) scale(.75)}.v-stripe-card.v-text-field--solo .v-label{display:none}.v-stripe-card.v-text-field--filled .VStripeCard{margin-top:22px}.v-stripe-card.v-text-field--filled .v-label{transform:translateY(-6px) scale(.75)}

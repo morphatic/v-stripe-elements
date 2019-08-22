@@ -1,18 +1,18 @@
-# VStripeInput
+# VStripeElements
 
-[![Build Status](https://travis-ci.org/morphatic/v-stripe-input.svg?branch=master)](https://travis-ci.org/morphatic/v-stripe-input)
-[![Coverage Status](https://coveralls.io/repos/github/morphatic/v-stripe-input/badge.svg?branch=master)](https://coveralls.io/github/morphatic/v-stripe-input?branch=master)
-![npm](https://img.shields.io/npm/v/@morphatic/v-stripe-input.svg)
-![MIT](https://img.shields.io/npm/l/@morphatic/v-stripe-input.svg)
+[![Build Status](https://travis-ci.org/morphatic/v-stripe-elements.svg?branch=master)](https://travis-ci.org/morphatic/v-stripe-elements)
+[![Coverage Status](https://coveralls.io/repos/github/morphatic/v-stripe-elements/badge.svg?branch=master)](https://coveralls.io/github/morphatic/v-stripe-elements?branch=master)
+![npm](https://img.shields.io/npm/v/@morphatic/v-stripe-elements.svg)
+![MIT](https://img.shields.io/npm/l/@morphatic/v-stripe-elements.svg)
 
-A Vue component that styles [Stripe Elements](https://stripe.com/payments/elements) to match the [Vuetify UI library](https://vuetifyjs.com).
+A set of Vue components that styles [Stripe Elements](https://stripe.com/payments/elements) to match the [Vuetify UI library](https://vuetifyjs.com).
 
 ## Installation and Configuration
 
 From the root of a Vue project already using Vuetify:
 
 ```bash
-npm i -S v-stripe-input
+npm i -S v-stripe-elements
 ```
 
 Then in the `.env` file in the root of your project:
@@ -33,17 +33,17 @@ Within a Vue template:
 
 ```vue
 <template>
-  <v-stripe-input
+  <v-stripe-card
     v-model="source"
     :api-key="process.env.VUE_APP_STRIPE_API_KEY"
-  ></v-stripe-input>
+  ></v-stripe-card>
 </template>
 
 <script>
-  import VStripeInput from 'v-stripe-input'
+  import { VStripeCard } from 'v-stripe-elements'
   export default {
     components: {
-      VStripeInput
+      VStripeCard
     },
     data: () => ({
       source: null

@@ -1,49 +1,49 @@
 // Imported Types
 /// <reference path="../node_modules/vuetify/src/globals.d.ts" />
 import Vue, { VNode } from 'vue'
-// import { VuetifyObject } from 'vuetify/types'
 import { VuetifyThemeVariant } from 'vuetify/types/services/theme'
+// import { VuetifyObject } from 'vuetify/types' // !this causes type errors if imported
 
 // Styles
-import './VStripeInput.sass'
+import './VStripeCard.sass'
 
 // Extensions and Components
 // @ts-ignore
 import { VProgressLinear, VTextField } from 'vuetify/lib'
 
-// Create Base Mixins and Properties
+// Create Base Mixins and Define Custom Properties
 const base = Vue.extend({ mixins: [VTextField] })
 interface options extends InstanceType<typeof base> {
+  /**
+   * Props unique to VStripeCard
+   */
+  $loadScript: (url: string) => Promise<boolean>
+  onCardBlur: stripe.elements.handler
+  onCardChange: stripe.elements.handler
+  onCardFocus: stripe.elements.handler
+  onCardReady: stripe.elements.handler
+  /**
+   * Props that **should** have been inherited from VTextField
+   * TODO: Figure out why these types aren't being recognized automatically
+   */
   autofocus: boolean
-  // apiKey: boolean
-  // card: stripe.elements.Element
   color: string|null
   computedId: string
   disabled: boolean
   errorBucket: string[]
-  // font: string
-  // hideIcon: boolean
-  // hidePostalCode: boolean
   iconStyle: 'default'|'solid'
   isFocused: boolean
   labelWidth: number|string
   lazyValue: any
   loaderHeight: number|string
   loading: string|boolean
-  $loadScript: (url: string) => Promise<boolean>
-  onCardBlur: stripe.elements.handler
-  onCardChange: stripe.elements.handler
-  onCardFocus: stripe.elements.handler
-  onCardReady: stripe.elements.handler
   outlined: boolean
-  // tokenOptions: stripe.TokenOptions
-  $vuetify: any // VuetifyObject // actually importing the type causes errors for some reason
-  // zip: string
+  $vuetify: any // VuetifyObject // importing this type from Vuetify causes errors for some reason
 }
 
-// Extend VTextField to define the VStripeInput component
+// Extend VTextField to define the VStripeCard component
 export default base.extend<options>().extend({
-  name: 'v-stripe-input',
+  name: 'v-stripe-card',
   props: {
     apiKey: {
       type: String,
@@ -87,19 +87,28 @@ export default base.extend<options>().extend({
     classes (): object {
       return {
         ...VTextField.options.computed.classes.call(this),
-        'v-stripe-input': true,
+        'v-stripe-card': true,
       }
     },
   },
   watch: {
     isDark (val: boolean, oldVal: boolean) {
+      // if the theme changes and a card has already been initialized
       if (val !== oldVal && this.card !== null) {
-        const style = this.genStyle(this.font, this.$vuetify.theme.currentTheme, this.$vuetify.theme.dark)
+        // generate styles to match the theme
+        const style = this.genStyle(
+          this.font,
+          this.$vuetify.theme.currentTheme,
+          this.$vuetify.theme.dark
+        )
+        // then update the card
         this.card.update({ style })
       }
     },
     isDisabled (val: boolean, oldVal: boolean) {
+      // if the disabled status changes and the card has already been initialized
       if (val !== oldVal && this.card !== null) {
+        // update its disabled status
         this.card.update({ disabled: val })
       }
     },
@@ -107,7 +116,14 @@ export default base.extend<options>().extend({
   mounted () {
     // Handle tasks NOT related to actual DOM rendering or manipulation
     const cardProps: stripe.elements.ElementsOptions = {
-      classes: { focus: 'focus', empty: 'empty' },
+      classes: {
+        base: 'VStripeCard',
+        complete: 'VStripeCard--complete',
+        empty: 'VStripeCard--empty',
+        focus: 'VStripeCard--focus',
+        invalid: 'VStripeCard--invalid',
+        webkitAutofill: 'VStripeCard--webkit-autofill',
+      },
       disabled: this.disabled,
       hideIcon: this.hideIcon,
       hidePostalCode: this.hidePostalCode,
@@ -253,13 +269,13 @@ export default base.extend<options>().extend({
       // is the external script loader available?
       if (typeof this.$loadScript === 'undefined') {
         // no
-        throw new Error('[VStripeInput Error]: Stripe is not available and could not be loaded. Please make sure that you have installed and configured all of the necessary dependencies to use this component.')
+        throw new Error('[VStripeCard Error]: Stripe is not available and could not be loaded. Please make sure that you have installed and configured all of the necessary dependencies to use this component.')
       } else {
         // yes, let's try to get Stripe
         return this.$loadScript('https://js.stripe.com/v3/')
           .then(() => true)
           .catch((err: Error) => {
-            throw new Error('[VStripeInput Error] There was a problem loading Stripe: ' + err.message)
+            throw new Error('[VStripeCard Error] There was a problem loading Stripe: ' + err.message)
           })
       }
     },

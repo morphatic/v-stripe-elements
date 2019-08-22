@@ -1,1 +1,1 @@
-{"version":3,"sources":["../src/index.ts"],"names":[],"mappings":";;;;;;;;;;;;;AAAA;;;;eAGe,wB","sourcesContent":["import VStripeInput from './VStripeInput'\n\nexport { VStripeInput }\nexport default VStripeInput\n"],"sourceRoot":"","file":"index.js"}
+{"version":3,"sources":["../src/index.ts"],"names":[],"mappings":";;;;;;;;;;;;;AAAA;;;;eAGe,uB","sourcesContent":["import VStripeCard from './VStripeCard'\n\nexport { VStripeCard }\nexport default VStripeCard\n"],"sourceRoot":"","file":"index.js"}

@@ -1,4 +1,4 @@
-import VStripeInput from './VStripeInput'
+import VStripeCard from './VStripeCard'
 
-export { VStripeInput }
-export default VStripeInput
+export { VStripeCard }
+export default VStripeCard

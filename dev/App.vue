@@ -5,7 +5,7 @@
       color="primary white--text"
     >
       <v-app-bar-nav-icon />
-      <v-toolbar-title>VStripeInput Demo</v-toolbar-title>
+      <v-toolbar-title>VStripeCard Demo</v-toolbar-title>
       <v-spacer />
       <v-toolbar-items>
         <v-switch
@@ -19,7 +19,7 @@
       <v-container fluid>
         <v-row>
           <v-col cols="6">
-            <v-stripe-input
+            <v-stripe-card
               v-model="source"
               :api-key="apiKey"
               append-icon="mdi-check"
@@ -40,7 +40,7 @@
         </v-row>
         <v-row>
           <v-col cols="6">
-            <v-stripe-input
+            <v-stripe-card
               v-model="source"
               font="Shadows Into Light"
               solo
@@ -63,7 +63,7 @@
         </v-row>
         <v-row>
           <v-col cols="6">
-            <v-stripe-input
+            <v-stripe-card
               v-model="source"
               filled
               clearable
@@ -85,7 +85,7 @@
         </v-row>
         <v-row>
           <v-col cols="6">
-            <v-stripe-input
+            <v-stripe-card
               v-model="source"
               outlined
               clearable
@@ -107,7 +107,7 @@
         </v-row>
         <v-row>
           <v-col cols="6">
-            <v-stripe-input
+            <v-stripe-card
               v-model="source"
               solo
               outlined
@@ -135,11 +135,11 @@
 </template>
 
 <script>
-  import VStripeInput from '../src/'
+  import { VStripeCard } from '../src/'
 
   export default {
     components: {
-      VStripeInput,
+      VStripeCard,
     },
     data: () => ({
       apiKey: 'pk_test_TYooMQauvdEDq54NiTphI7jx',

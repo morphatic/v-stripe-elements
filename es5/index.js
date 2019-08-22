@@ -3,18 +3,18 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-Object.defineProperty(exports, "VStripeInput", {
+Object.defineProperty(exports, "VStripeCard", {
   enumerable: true,
   get: function get() {
-    return _VStripeInput["default"];
+    return _VStripeCard["default"];
   }
 });
 exports["default"] = void 0;
 
-var _VStripeInput = _interopRequireDefault(require("./VStripeInput"));
+var _VStripeCard = _interopRequireDefault(require("./VStripeCard"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-var _default = _VStripeInput["default"];
+var _default = _VStripeCard["default"];
 exports["default"] = _default;
 //# sourceMappingURL=index.js.map

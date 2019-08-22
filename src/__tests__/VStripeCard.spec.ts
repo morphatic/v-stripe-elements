@@ -19,20 +19,20 @@ const vuetifyMocks = {
 }
 
 // Component to be tested
-import { VStripeInput } from '../'
+import { VStripeCard } from '..'
 
 // Data necessary for tests
 const apiKey = 'pk_test_TYooMQauvdEDq54NiTphI7jx'
 
-describe('VStripeInput', () => {
-  type Instance = InstanceType<typeof VStripeInput>
+describe('VStripeCard', () => {
+  type Instance = InstanceType<typeof VStripeCard>
   let mountFunction: (options?: MountOptions<Instance>) => Wrapper<Instance>
 
   beforeEach(() => {
     mountFunction = (options?: MountOptions<Instance>) => {
       // @ts-ignore
       global.Stripe = Stripe
-      return mount(VStripeInput, {
+      return mount(VStripeCard, {
         mocks: {
           ...vuetifyMocks,
         },

@@ -1,1 +1,1 @@
-{"version":3,"sources":["../src/index.ts"],"names":[],"mappings":"AAAA,OAAO,YAAP,MAAyB,gBAAzB;AAEA,SAAS,YAAT;AACA,eAAe,YAAf","sourcesContent":["import VStripeInput from './VStripeInput'\n\nexport { VStripeInput }\nexport default VStripeInput\n"],"sourceRoot":"","file":"index.js"}
+{"version":3,"sources":["../src/index.ts"],"names":[],"mappings":"AAAA,OAAO,WAAP,MAAwB,eAAxB;AAEA,SAAS,WAAT;AACA,eAAe,WAAf","sourcesContent":["import VStripeCard from './VStripeCard'\n\nexport { VStripeCard }\nexport default VStripeCard\n"],"sourceRoot":"","file":"index.js"}

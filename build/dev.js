@@ -32,7 +32,7 @@ module.exports = merge(baseWebpackConfig, {
   },
   resolve: {
     alias: {
-      vuetify: 'vuetify',
+      vuetify: 'vuetify/lib',
       vue$: 'vue/dist/vue.esm.js',
     },
   },
