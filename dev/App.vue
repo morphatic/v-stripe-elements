@@ -21,9 +21,9 @@
           <v-col cols="6">
             <v-stripe-card
               v-model="source"
-              :api-key="apiKey"
+
               append-icon="mdi-check"
-              clearable
+              success
               label="Some label"
               hint="Some hint"
               persistent-hint
@@ -31,7 +31,7 @@
           </v-col>
           <v-col cols="6">
             <v-text-field
-              clearable
+              success
               label="Some label"
               hint="Some hint"
               persistent-hint
@@ -44,7 +44,7 @@
               v-model="source"
               font="Shadows Into Light"
               solo
-              clearable
+              success
               :api-key="apiKey"
               label="Some label"
               hint="Some hint"
@@ -54,7 +54,7 @@
           <v-col cols="6">
             <v-text-field
               solo
-              clearable
+              success
               label="Some label"
               hint="Some hint"
               persistent-hint
@@ -66,7 +66,7 @@
             <v-stripe-card
               v-model="source"
               filled
-              clearable
+              success
               :api-key="apiKey"
               label="Some label"
               hint="Some hint"
@@ -76,7 +76,7 @@
           <v-col cols="6">
             <v-text-field
               filled
-              clearable
+              success
               label="Some label"
               hint="Some hint"
               persistent-hint
@@ -88,7 +88,7 @@
             <v-stripe-card
               v-model="source"
               outlined
-              clearable
+              success
               :api-key="apiKey"
               label="Some label"
               hint="Some hint"
@@ -98,7 +98,7 @@
           <v-col cols="6">
             <v-text-field
               outlined
-              clearable
+              success
               label="Some reall long label"
               hint="Some hint"
               persistent-hint
@@ -111,7 +111,7 @@
               v-model="source"
               solo
               outlined
-              clearable
+              success
               :api-key="apiKey"
               label="Some label"
               hint="Some hint"
@@ -122,7 +122,7 @@
             <v-text-field
               solo
               outlined
-              clearable
+              success
               label="Some label"
               hint="Some hint"
               persistent-hint

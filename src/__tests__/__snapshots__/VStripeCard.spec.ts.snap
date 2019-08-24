@@ -1,0 +1,154 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`VStripeCard initialization should render component and match snapshot 1`] = `
+<div class="v-input theme--light v-text-field v-stripe-card">
+  <div class="v-input__control">
+    <div class="v-input__slot">
+      <div class="v-text-field__slot">
+        <div id="input-1">
+        </div>
+      </div>
+      <div role="progressbar"
+           aria-valuemin="0"
+           aria-valuemax="100"
+           class="v-progress-linear v-progress-linear--absolute theme--light"
+           style="height: 2px;"
+      >
+        <div class="v-progress-linear__background primary"
+             style="opacity: 0.3; left: 0%; width: 100%;"
+        >
+        </div>
+        <div class="v-progress-linear__buffer">
+        </div>
+        <div class="v-progress-linear__indeterminate v-progress-linear__indeterminate--active">
+          <div class="v-progress-linear__indeterminate long primary">
+          </div>
+          <div class="v-progress-linear__indeterminate short primary">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="v-text-field__details">
+      <div class="v-messages theme--light">
+        <span name="message-transition"
+              tag="div"
+              class="v-messages__wrapper"
+        >
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`VStripeCard internal functions genCardProps() should generate a \`cardProps\` object in the format that Stripe expects 1`] = `
+Object {
+  "classes": Object {
+    "base": "VStripeCard",
+    "complete": "VStripeCard--complete",
+    "empty": "VStripeCard--empty",
+    "focus": "VStripeCard--focus",
+    "invalid": "VStripeCard--invalid",
+    "webkitAutofill": "VStripeCard--webkit-autofill",
+  },
+  "disabled": false,
+  "hideIcon": false,
+  "hidePostalCode": false,
+  "iconStyle": "default",
+  "style": Object {},
+}
+`;
+
+exports[`VStripeCard internal functions genCardProps() should generate a \`cardProps\` object in the format that Stripe expects 2`] = `
+Object {
+  "classes": Object {
+    "base": "VStripeCard",
+    "complete": "VStripeCard--complete",
+    "empty": "VStripeCard--empty",
+    "focus": "VStripeCard--focus",
+    "invalid": "VStripeCard--invalid",
+    "webkitAutofill": "VStripeCard--webkit-autofill",
+  },
+  "disabled": false,
+  "hideIcon": false,
+  "hidePostalCode": false,
+  "iconStyle": "default",
+  "style": Object {
+    "base": Object {
+      "::placeholder": Object {
+        "color": "rgb(255,255,255,0.7)",
+      },
+      "color": "#ccc",
+      "fontFamily": "'Open Sans', sans-serif",
+      "fontSize": "16px",
+      "fontSmoothing": "antialiased",
+      "iconColor": "#eceff1",
+    },
+    "invalid": Object {
+      "color": "#f00",
+      "iconColor": "#f00",
+    },
+  },
+  "value": Object {
+    "postalCode": "12345",
+  },
+}
+`;
+
+exports[`VStripeCard internal functions genFont() should generate an \`ElementsCreateOptions\` object in the format that Stripe expects 1`] = `
+Object {
+  "fonts": Array [
+    Object {
+      "cssSrc": "https://fonts.googleapis.com/css?family=Roboto:400",
+    },
+  ],
+}
+`;
+
+exports[`VStripeCard internal functions genFont() should generate an \`ElementsCreateOptions\` object in the format that Stripe expects 2`] = `
+Object {
+  "fonts": Array [
+    Object {
+      "cssSrc": "https://fonts.googleapis.com/css?family=Open%20Sans:400",
+    },
+  ],
+}
+`;
+
+exports[`VStripeCard internal functions genStyle() should generate a \`style\` object in the format that Stripe expects 1`] = `
+Object {
+  "base": Object {
+    "::placeholder": Object {
+      "color": "rgb(0,0,0,0.54)",
+    },
+    "color": "#000000",
+    "fontFamily": "'Roboto', sans-serif",
+    "fontSize": "16px",
+    "fontSmoothing": "antialiased",
+    "iconColor": "#455a64",
+  },
+  "invalid": Object {
+    "color": "#ff5252",
+    "iconColor": "#ff5252",
+  },
+}
+`;
+
+exports[`VStripeCard internal functions genStyle() should generate a \`style\` object in the format that Stripe expects 2`] = `
+Object {
+  "base": Object {
+    "::placeholder": Object {
+      "color": "rgb(255,255,255,0.7)",
+    },
+    "color": "#ccc",
+    "fontFamily": "'Open Sans', sans-serif",
+    "fontSize": "16px",
+    "fontSmoothing": "antialiased",
+    "iconColor": "#eceff1",
+  },
+  "invalid": Object {
+    "color": "#f00",
+    "iconColor": "#f00",
+  },
+}
+`;

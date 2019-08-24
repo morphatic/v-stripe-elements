@@ -1,8 +1,9 @@
 // Imported Types
-/// <reference path="../node_modules/vuetify/src/globals.d.ts" /> // imported for the extend() overload
+/// <reference path="../node_modules/vuetify/src/globals.d.ts" />
 import Vue, { VNode } from 'vue'
 import { VuetifyThemeVariant } from 'vuetify/types/services/theme'
 // import { VuetifyObject } from 'vuetify/types' // !this causes type errors if imported
+import { ElementStyles } from '../types'
 
 // Styles
 import './VStripeCard.sass'
@@ -32,6 +33,7 @@ interface options extends InstanceType<typeof base> {
   disabled: boolean
   errorBucket: string[]
   iconStyle: 'default'|'solid'
+  isDark: boolean
   isFocused: boolean
   labelWidth: number|string
   lazyValue: any
@@ -49,7 +51,11 @@ export default base.extend<options>().extend({
       type: String,
       required: true,
     },
-    font: {
+    customStyle: {
+      type: Object,
+      default: () => ({}),
+    },
+    fontName: {
       type: String,
       default: 'Roboto',
     },
@@ -90,17 +96,18 @@ export default base.extend<options>().extend({
         'v-stripe-card': true,
       }
     },
+    theme (): VuetifyThemeVariant {
+      return this.$vuetify.theme.currentTheme
+    },
   },
   watch: {
     isDark (val: boolean, oldVal: boolean) {
       // if the theme changes and a card has already been initialized
       if (val !== oldVal && this.card !== null) {
+        // extract key variables from the context
+        const { isDark, fontName, theme, customStyle } = this
         // generate styles to match the theme
-        const style = this.genStyle(
-          this.font,
-          this.$vuetify.theme.currentTheme,
-          this.$vuetify.theme.dark
-        )
+        const style = this.genStyle(customStyle, fontName, isDark, theme)
         // then update the card
         this.card.update({ style })
       }
@@ -114,28 +121,19 @@ export default base.extend<options>().extend({
     },
   },
   mounted () {
-    // Handle tasks NOT related to actual DOM rendering or manipulation
-    const cardProps: stripe.elements.ElementsOptions = {
-      classes: {
-        base: 'VStripeCard',
-        complete: 'VStripeCard--complete',
-        empty: 'VStripeCard--empty',
-        focus: 'VStripeCard--focus',
-        invalid: 'VStripeCard--invalid',
-        webkitAutofill: 'VStripeCard--webkit-autofill',
-      },
-      disabled: this.disabled,
-      hideIcon: this.hideIcon,
-      hidePostalCode: this.hidePostalCode,
-      iconStyle: this.iconStyle,
-      style: this.genStyle(this.font, this.$vuetify.theme.currentTheme, this.$vuetify.theme.dark),
-    }
-    this.zip && (cardProps.value = { postalCode: this.zip })
+    // make sure the API key is set correctly
+    this.checkAPIKey(this.apiKey)
+    // extract props from the context
+    const { disabled, fontName, hideIcon, hidePostalCode, iconStyle, isDark, customStyle, theme, zip } = this
+    // use them to generate the options we'll need to generate the Stripe and card instances
+    const style = this.genStyle(customStyle, fontName, isDark, theme)
+    const cardProps = this.genCardProps({ disabled, hideIcon, hidePostalCode, iconStyle, style, zip })
+    // make sure the Stripe.js library is loaded
     this.loadStripe()
-      // initialize the Stripe.js object
+      // then initialize the Stripe.js object
       .then(() => { this.stripe = Stripe(this.apiKey) }) // eslint-disable-line no-undef
       // then create a Stripe elements generator
-      .then(() => { this.elements = this.stripe && this.stripe.elements(this.genFont(this.font)) })
+      .then(() => { this.elements = this.stripe && this.stripe.elements(this.genFont(this.fontName)) })
       // then create a card element, setup card events, and mount the card
       .then(() => {
         this.card = this.elements && this.elements.create('card', cardProps)
@@ -150,6 +148,22 @@ export default base.extend<options>().extend({
       .catch((err: Error) => { console.log(err) })
   },
   methods: {
+    /**
+     * Checks the API key and warns the user if they are using a secret
+     * key (instead of a public key), or if they are using a test key.
+     *
+     * @param {string} key An API key
+     */
+    checkAPIKey (key: string): void {
+      // if they are using a secret key
+      if (/^sk_/.test(key)) {
+        console.error('[VStripeCard Error] It looks like you are using a SECRET API key! You should be using your PUBLIC API key. If you have mistakenly made your secret key publicly available on the web, you should strongly consider rolling your API keys. See: https://stripe.com/docs/keys#keeping-your-keys-safe')
+      }
+      // if they are using a test key
+      if (/^pk_test/.test(key)) {
+        console.warn('[VStripeCard Warning] Your `v-stripe-card` instance was initialized with a TEST key. This is correct and appropriate for development and/or testing environments. For production environments, please use your LIVE key. See https://stripe.com/docs/keys for more information.')
+      }
+    },
     clearableCallback () {
       this.card !== null && this.card.clear()
       VTextField.options.methods.clearableCallback.call(this)
@@ -173,6 +187,45 @@ export default base.extend<options>().extend({
       }
     },
     /**
+     * Generates a well-formed object with all of the values necessary to
+     * correctly create a `stripe.elements.Element` card object.
+     *
+     * @param   {object}                          params                An object with all data necessary to generate valid card props
+     * @param   {boolean}                         params.disabled       Is the input disabled?
+     * @param   {boolean}                         params.hideIcon       Should the card icon be hidden?
+     * @param   {boolean}                         params.hidePostalCode Should the postal code field be hidden?
+     * @param   {string}                          params.iconStyle      'solid' or 'default'
+     * @param   {ElementStyles}                   params.style          Output from `genStyle()`
+     * @param   {string}                          params.zip            Zip code to be pre-filled, if known
+     * @returns {stripe.elements.ElementsOptions}                       Object to be fed to the `stripe.create('card')` function
+     */
+    genCardProps ({
+      disabled = false,
+      hideIcon = false,
+      hidePostalCode = false,
+      iconStyle = 'default' as 'default' | 'solid' | undefined,
+      style = {},
+      zip = '',
+    } = {}): stripe.elements.ElementsOptions {
+      const cardProps: stripe.elements.ElementsOptions = {
+        classes: {
+          base: 'VStripeCard',
+          complete: 'VStripeCard--complete',
+          empty: 'VStripeCard--empty',
+          focus: 'VStripeCard--focus',
+          invalid: 'VStripeCard--invalid',
+          webkitAutofill: 'VStripeCard--webkit-autofill',
+        },
+        disabled,
+        hideIcon,
+        hidePostalCode,
+        iconStyle,
+        style,
+      }
+      zip && (cardProps.value = { postalCode: zip })
+      return cardProps
+    },
+    /**
      * TODO: Should this throw an error if the font is invalid?
      * Allows users of the component to specify the font that will be used
      * inside the text fields generated by Stripe. Does NOT affect the font
@@ -182,7 +235,7 @@ export default base.extend<options>().extend({
      * @param   {string} font The name of a Google font, or a URL to a valid font
      * @returns {object}      An object in the form required by `Stripe.elements()`
      */
-    genFont (font: string): stripe.elements.ElementsCreateOptions {
+    genFont (font = 'Roboto'): stripe.elements.ElementsCreateOptions {
       const cssSrc = this.isURL(font)
         ? font
         : `https://fonts.googleapis.com/css?family=${encodeURI(font)}:400`
@@ -220,25 +273,28 @@ export default base.extend<options>().extend({
      *
      * @param   {string} font
      */
-    genStyle: (font: string, theme: VuetifyThemeVariant, dark = false): object => ({
-      base: {
-        color: dark ? '#ffffff' : '#000000',
-        fontFamily: `'${font}', sans-serif`,
-        fontSize: '16px',
-        fontSmoothing: 'antialiased',
-        iconColor: dark ? '#eceff1' : '#455a64',
-        '::placeholder': {
-          color: dark ? 'rgb(255,255,255,0.7)' : 'rgb(0,0,0,0.54)',
+    genStyle: (customStyle: ElementStyles, fontName: string, isDark: boolean, theme: VuetifyThemeVariant): ElementStyles => {
+      // borrowed from https://gist.github.com/ahtcx/0cd94e62691f539160b32ecda18af3d6
+      // @ts-ignore
+      const merge=(t,s)=>{let o=Object,a=o.assign;for(let k of o.keys(s))s[k]instanceof o&&a(s[k],merge(t[k],s[k]));return a(t||{},s),t}
+      const defaults: ElementStyles = {
+        base: {
+          color: isDark ? '#ffffff' : '#000000',
+          fontFamily: `'${fontName}', sans-serif`,
+          fontSize: '16px',
+          fontSmoothing: 'antialiased',
+          iconColor: isDark ? '#eceff1' : '#455a64',
+          '::placeholder': {
+            color: isDark ? 'rgb(255,255,255,0.7)' : 'rgb(0,0,0,0.54)',
+          },
         },
-        ':focus::placeholder': {
-          color: dark ? 'rgb(255,255,255,0.7)' : 'rgb(0,0,0,0.54)',
+        invalid: {
+          color: theme.error as string || '#ff5252',
+          iconColor: theme.error as string || '#ff5252',
         },
-      },
-      invalid: {
-        color: theme.error,
-        iconColor: theme.error,
-      },
-    }),
+      }
+      return merge(defaults, customStyle)
+    },
     /**
      * Loosely validates a URL
      * Based on: {@link|https://github.com/segmentio/is-url}
@@ -263,9 +319,18 @@ export default base.extend<options>().extend({
       }
       return false
     },
+    /**
+     * Check to see if the Stripe.js library has been loaded into the
+     * browser. If it has not, try to load it. If Stripe cannot be
+     * loaded or there was a problem with loading, an error is thrown.
+     *
+     * @throws  {Error}            Could not load Stripe because `vue-plugin-load-script` is not available
+     * @throws  {Error}            Could not load Stripe because of a network (or other) error
+     * @returns {Promise<boolean>} True if Skype has been loaded, otherwise throws
+     */
     loadStripe (): Promise<boolean> {
       // is Stripe already available?
-      if (typeof Stripe !== 'undefined') return Promise.resolve(true)
+      if (!!Stripe) return Promise.resolve(true)
       // is the external script loader available?
       if (typeof this.$loadScript === 'undefined') {
         // no
@@ -330,13 +395,4 @@ export default base.extend<options>().extend({
       // }
     },
   },
-}
-//  as ComponentOptions<
-//   Vue,
-//   DefaultData<Vue>,
-//   DefaultMethods<Vue>,
-//   DefaultComputed,
-//   PropsDefinition<Record<string, any>>,
-//   Record<string, any>
-// >
-)
+})

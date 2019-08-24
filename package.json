@@ -1,6 +1,6 @@
 {
   "name": "v-stripe-elements",
-  "version": "0.0.0-development",
+  "version": "1.0.0",
   "description": "A Vue component that styles Stripe Elements to match the Vuetify UI library.",
   "author": "Morgan Benton <morgan.benton@gmail.com> (https://morphatic.com)",
   "license": "MIT",
@@ -41,15 +41,7 @@
     "dev": "cross-env NODE_ENV=development webpack-dev-server --config build/dev.js --hot",
     "lint": "concurrently -n \"tsc,tslint,eslint\" --kill-others-on-fail \"tsc --noEmit --pretty\" \"tslint -p . src/**/*.ts -t verbose\" \"eslint --ext .js,.ts src\"",
     "lint:fix": "concurrently -n \"tsc,tslint,eslint\" \"tsc --noEmit --pretty\" \"tslint --fix -p . src/**/*.ts -t verbose\" \"eslint --fix --ext .js,.ts src\"",
-    "publish": "yarn build && git push origin --tags && npm run changelog && git push origin",
-    "prerelease:minor": "yarn version --preminor && yarn publish --access public",
-    "prerelease:major": "yarn version --premajor && yarn publish --access public",
-    "postversion": "yarn publish --access public",
-    "preversion": "yarn build",
     "release": "yarn run semantic-release",
-    "release:patch": "yarn version --patch && yarn publish --access public",
-    "release:minor": "yarn version --minor && yarn publish --access public",
-    "release:major": "yarn version --major && yarn publish --access public",
     "test": "node build/jest.js",
     "test:coverage": "yarn test --coverage",
     "test:unix": "cross-env NODE_ENV=test jest",
@@ -58,10 +50,6 @@
     "tsc": "tsc",
     "watch": "cross-env TARGET=development webpack --config build/dist.js --progress --hide-modules --watch",
     "semantic-release": "semantic-release"
-  },
-  "peerDependencies": {
-    "vue": "^2.6.10",
-    "vuetify": "^2.0.10"
   },
   "devDependencies": {
     "@babel/cli": "^7.5.5",
@@ -120,10 +108,12 @@
     "typescript": "^3.5.3",
     "typestrict": "^1.0.2",
     "url-loader": "^2.1.0",
+    "vue": "^2.6.10",
     "vue-loader": "^15.7.1",
     "vue-meta": "^2.2.1",
     "vue-plugin-load-script": "^1.2.0",
     "vue-template-compiler": "^2.6.10",
+    "vuetify": "^2.0.10",
     "vuetify-loader": "^1.3.0",
     "webpack": "^4.39.2",
     "webpack-cli": "^3.3.6",

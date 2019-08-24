@@ -20,6 +20,9 @@ module.exports = {
     'jest-serializer-html',
   ],
   testEnvironment: 'jest-environment-jsdom-fourteen',
+  testEnvironmentOptions: {
+    omitJSDOMErrors: true,
+  },
   transform: {
     '\\.(sass|scss)$': 'jest-css-modules',
     '.*\\.js$': 'babel-jest',
