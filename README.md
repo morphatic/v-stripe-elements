@@ -2,8 +2,8 @@
 
 [![Build Status](https://travis-ci.org/morphatic/v-stripe-elements.svg?branch=master)](https://travis-ci.org/morphatic/v-stripe-elements)
 [![Coverage Status](https://coveralls.io/repos/github/morphatic/v-stripe-elements/badge.svg?branch=master)](https://coveralls.io/github/morphatic/v-stripe-elements?branch=master)
-![npm](https://img.shields.io/npm/v/@morphatic/v-stripe-elements.svg)
-![MIT](https://img.shields.io/npm/l/@morphatic/v-stripe-elements.svg)
+![npm](https://img.shields.io/npm/v/v-stripe-elements)
+![NPM](https://img.shields.io/npm/l/v-stripe-elements)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
 A set of Vue components that styles [Stripe Elements](https://stripe.com/payments/elements) to match the [Vuetify UI library](https://vuetifyjs.com).
@@ -19,13 +19,13 @@ npm i -S v-stripe-elements
 Then in the `.env` file in the root of your project:
 
 ```sh
-VUE_APP_STRIPE_API_KEY=sk_live_4eC39HqLyjWDarjtT1zdp7dc
+VUE_APP_STRIPE_API_KEY=pk_live_4eC39HqLyjWDarjtT1zdp7dc
 ```
 
 Optionally, add your test key to `.env.local`. This will automatically use the test key when doing local development and testing.
 
 ```sh
-VUE_APP_STRIPE_API_KEY=sk_test_4eC39HqLyjWDarjtT1zdp7dc
+VUE_APP_STRIPE_API_KEY=pk_test_4eC39HqLyjWDarjtT1zdp7dc
 ```
 
 ## Basic Usage

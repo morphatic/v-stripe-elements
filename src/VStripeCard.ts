@@ -5,6 +5,9 @@ import { VuetifyThemeVariant } from 'vuetify/types/services/theme'
 // import { VuetifyObject } from 'vuetify/types' // !this causes type errors if imported
 import { ElementStyles } from '../types'
 
+// 3rd Party Libs
+import merge from 'deepmerge'
+
 // Styles
 import './VStripeCard.sass'
 
@@ -18,7 +21,7 @@ interface options extends InstanceType<typeof base> {
   /**
    * Props unique to VStripeCard
    */
-  $loadScript: (url: string) => Promise<boolean>
+  $loadScript: (url: string) => Promise<void>
   onCardBlur: stripe.elements.handler
   onCardChange: stripe.elements.handler
   onCardFocus: stripe.elements.handler
@@ -51,6 +54,10 @@ export default base.extend<options>().extend({
       type: String,
       required: true,
     },
+    create: {
+      type: String,
+      default: 'token',
+    },
     customStyle: {
       type: Object,
       default: () => ({}),
@@ -59,23 +66,24 @@ export default base.extend<options>().extend({
       type: String,
       default: 'Roboto',
     },
+    fontUrl: {
+      type: String,
+      default: '',
+    },
     hideIcon: Boolean,
     hidePostalCode: Boolean,
     iconStyle: {
       type: String,
       default: 'default',
     },
-    tokenOptions: {
+    options: {
       type: Object,
-      default: () => ({
-        name: '',
-        address_line1: '',
-        address_line2: '',
-        address_city: '',
-        address_state: '',
-        address_zip: '',
-        address_country: '',
-      }),
+      /**
+       * TODO: Document available options in README.md
+       * These can be any and all available options for creating
+       * either a token or a source.
+       */
+      default: () => ({}),
     },
     zip: {
       type: String,
@@ -123,29 +131,8 @@ export default base.extend<options>().extend({
   mounted () {
     // make sure the API key is set correctly
     this.checkAPIKey(this.apiKey)
-    // extract props from the context
-    const { disabled, fontName, hideIcon, hidePostalCode, iconStyle, isDark, customStyle, theme, zip } = this
-    // use them to generate the options we'll need to generate the Stripe and card instances
-    const style = this.genStyle(customStyle, fontName, isDark, theme)
-    const cardProps = this.genCardProps({ disabled, hideIcon, hidePostalCode, iconStyle, style, zip })
     // make sure the Stripe.js library is loaded
     this.loadStripe()
-      // then initialize the Stripe.js object
-      .then(() => { this.stripe = Stripe(this.apiKey) }) // eslint-disable-line no-undef
-      // then create a Stripe elements generator
-      .then(() => { this.elements = this.stripe && this.stripe.elements(this.genFont(this.fontName)) })
-      // then create a card element, setup card events, and mount the card
-      .then(() => {
-        this.card = this.elements && this.elements.create('card', cardProps)
-        if (this.card !== null) {
-          this.card.on('blur', this.onCardBlur)
-          this.card.on('change', this.onCardChange)
-          this.card.on('focus', this.onCardFocus)
-          this.card.on('ready', this.onCardReady)
-          this.card.mount(`#${this.computedId}`)
-        }
-      })
-      .catch((err: Error) => { console.log(err) })
   },
   methods: {
     /**
@@ -169,21 +156,28 @@ export default base.extend<options>().extend({
       VTextField.options.methods.clearableCallback.call(this)
     },
     /**
-     * Converts the collected payment information into a single-use token
-     * that can safely be passed to your backend API server where a
-     * payment request can be processed.
-     * See {@link|https://stripe.com/docs/stripe-js/reference#stripe-create-token}
+     * Instantiates a Stripe card element and mounts it in the DOM.
      */
-    async createToken () {
-      if (this.stripe === null || this.card === null) return
-      const { token, error } = await this.stripe.createToken(
-        this.card,
-        this.tokenOptions
-      )
-      if (!error) {
-        // do something
-      } else {
-        this.$emit('input', token)
+    genCard () {
+      // extract props from the context
+      const { disabled, fontName, fontUrl, hideIcon, hidePostalCode, iconStyle, isDark, customStyle, theme, zip } = this
+      // use them to generate the options we'll need to generate the Stripe and card instances
+      const style = this.genStyle(customStyle, fontName, isDark, theme)
+      const cardProps = this.genCardProps({ disabled, hideIcon, hidePostalCode, iconStyle, style, zip })
+      // initialize Stripe
+      this.stripe = Stripe(this.apiKey) // eslint-disable-line no-undef
+      // create an Elements generator
+      const font = fontUrl || fontName
+      this.elements = this.stripe.elements(this.genFont(font))
+      // then initialize the card
+      this.card = this.elements.create('card', cardProps)
+      // setup card event handlers and mount the card
+      if (this.card !== null) {
+        this.card.on('blur', this.onCardBlur)
+        this.card.on('change', this.onCardChange)
+        this.card.on('focus', this.onCardFocus)
+        this.card.on('ready', this.onCardReady)
+        this.card.mount(`#${this.computedId}`)
       }
     },
     /**
@@ -248,7 +242,7 @@ export default base.extend<options>().extend({
      * see: {@link|https://stripe.com/docs/stripe-js/reference#element-mount}
      */
     genInput (): VNode {
-      return this.$createElement('div', { attrs: { id: this.computedId } })
+      return this.$createElement('div', { attrs: { id: this.computedId, tabindex: -1 } })
     },
     /**
      * Maintains the ability for users of the component to control the
@@ -274,9 +268,6 @@ export default base.extend<options>().extend({
      * @param   {string} font
      */
     genStyle: (customStyle: ElementStyles, fontName: string, isDark: boolean, theme: VuetifyThemeVariant): ElementStyles => {
-      // borrowed from https://gist.github.com/ahtcx/0cd94e62691f539160b32ecda18af3d6
-      // @ts-ignore
-      const merge=(t,s)=>{let o=Object,a=o.assign;for(let k of o.keys(s))s[k]instanceof o&&a(s[k],merge(t[k],s[k]));return a(t||{},s),t}
       const defaults: ElementStyles = {
         base: {
           color: isDark ? '#ffffff' : '#000000',
@@ -326,73 +317,138 @@ export default base.extend<options>().extend({
      *
      * @throws  {Error}            Could not load Stripe because `vue-plugin-load-script` is not available
      * @throws  {Error}            Could not load Stripe because of a network (or other) error
-     * @returns {Promise<boolean>} True if Skype has been loaded, otherwise throws
      */
-    loadStripe (): Promise<boolean> {
-      // is Stripe already available?
-      if (!!Stripe) return Promise.resolve(true)
-      // is the external script loader available?
-      if (typeof this.$loadScript === 'undefined') {
-        // no
-        throw new Error('[VStripeCard Error]: Stripe is not available and could not be loaded. Please make sure that you have installed and configured all of the necessary dependencies to use this component.')
+    loadStripe () {
+      // Is Stripe already loaded?
+      if (typeof Stripe === 'function') {
+        // Yes. Generate the card.
+        this.genCard()
       } else {
-        // yes, let's try to get Stripe
-        return this.$loadScript('https://js.stripe.com/v3/')
-          .then(() => true)
-          .catch((err: Error) => {
-            throw new Error('[VStripeCard Error] There was a problem loading Stripe: ' + err.message)
+        // No. Set the Stripe URL.
+        const src = 'https://js.stripe.com/v3/'
+        // Is it already being loaded by another component?
+        if (document.querySelector(`script[src="${src}"]`)) {
+          // Yes, it's being loaded, so listen for it.
+          this.$root.$once('stripe-loaded', () => {
+            // instantiate the card
+            this.genCard()
           })
+        } else {
+          // No. Is the script loader installed?
+          if (typeof this.$loadScript === 'undefined') {
+            // No.
+            this.loading = false
+            this.errorBucket.push('Stripe could not be loaded')
+            throw new Error('[VStripeCard Error]: Stripe is not available and could not be loaded. Please make sure that you have installed and configured all of the necessary dependencies to use this component.')
+          } else {
+            // Yes, so try to load it.
+            this.$loadScript(src).then(() => {
+              // Let other potential components know...
+              this.$root.$emit('stripe-loaded')
+              // and generate the card
+              this.genCard()
+            }).catch((error: Error) => {
+              this.loading = false
+              this.errorBucket.push('Error loading stripe')
+              throw new Error('[VStripeCard Error] There was a problem loading Stripe: ' + error.message)
+            })
+          }
+        }
       }
     },
+    /**
+     * Handles card blur events. Propagates (emits) a blur event to
+     * allow other components to register event handlers that can
+     * respond to the card being blurred.
+     *
+     * @param {ElementChangeResponse} e Event data from the card element
+     */
     onCardBlur (e: stripe.elements.ElementChangeResponse) {
       this.isFocused = false
+      // if we have enough info, process the card
+      if (this.okToSubmit) {
+        this.processCard()
+      }
       this.$emit('blur', e)
     },
+    /**
+     * Handles card change events. Clears or sets errors in the
+     * `errorBucket`. If the card is empty, sets `lazyValue` to false.
+     *
+     * @param {ElementChangeResponse} e Event data from the card element
+     */
     onCardChange (e: stripe.elements.ElementChangeResponse) {
       if (e.error) {
         // handle card errors
+        this.okToSubmit = false
         e.error.message && this.errorBucket.push(e.error.message)
       }
       if (e.complete) {
         // handle card input is complete
+        this.okToSubmit = true
         this.errorBucket = []
       }
       if (e.empty) {
+        this.okToSubmit = false
         this.lazyValue = !e.empty
       }
     },
+    /**
+     * TODO: Should this function emit? Does it emit the right value?
+     * Handles card focus events. Propagates (emits) a focus event to
+     * allow other components to register event handlers that can
+     * respond to the card being focused.
+     *
+     * @param {ElementChangeResponse} e Event data from the card element
+     */
     onCardFocus (e: stripe.elements.ElementChangeResponse) {
       this.isFocused = true
-      this.$emit('focus', true) // Do we want to emit? Is this the right value to emit?
+      this.$emit('focus', true)
     },
+    /**
+     * Handles card initialization events. Propagates (emits) a ready event to
+     * allow other components to register event handlers that can
+     * respond to the card being ready. Will also focus the card input
+     * if `autofocus` is true.
+     *
+     * @param {ElementChangeResponse} e Event data from the card element
+     */
     onCardReady (e: stripe.elements.ElementChangeResponse) {
       this.isReady = true
       this.autofocus && this.card !== null && this.card.focus()
       this.$emit('ready', e)
     },
-    setLabelWidth () {
-      if (!this.outlined) return
-      this.labelWidth = (this.$refs.label as HTMLElement).offsetWidth * 0.75 + 6
-    },
-    async verifyCardInfo () {
-      // // bail if we're not ready yet
-      // if (!this.okToSubmit) return
-
-      // // otherwise, submit info to Stripe
-      // const { source, error } = await this.stripe.createSource(this.card, {
-      //   currency: 'usd',
-      //   metadata: this.meta,
-      //   owner: this.owner,
-      //   usage: 'reusable',
-      // })
-      // // if there was a problem
-      // if (error) {
-      //   // do something
-      //   console.log(error)
-      // } else {
-      //   // payment method verified successfully
-      //   this.$emit('cardVerified', source)
-      // }
+    /**
+     * Converts the collected payment information into a single-use token
+     * or a multi-use source that can safely be passed to your backend
+     * API server where a payment request can be processed.
+     *
+     * See {@link|https://stripe.com/docs/stripe-js/reference#stripe-create-token}
+     */
+    async processCard () {
+      if (this.stripe && this.card) {
+        if (this.create === 'token') {
+          const { token, error } = await this.stripe.createToken(this.card, this.options)
+          if (!error) {
+            this.errorBucket = []
+            console.log('token: ', token)
+            this.$emit('input', token)
+          } else {
+            // handle error
+            error.message && this.errorBucket.push(error.message)
+          }
+        } else {
+          const { source, error } = await this.stripe.createSource(this.card, this.options)
+          if (!error) {
+            this.errorBucket = []
+            console.log('source: ', source)
+            this.$emit('input', source)
+          } else {
+            // handle error
+            error.message && this.errorBucket.push(error.message)
+          }
+        }
+      }
     },
   },
 })

@@ -21,20 +21,21 @@
           <v-col cols="6">
             <v-stripe-card
               v-model="source"
-
-              append-icon="mdi-check"
-              success
+              :api-key="apiKey"
+              :append-icon="source && icons.check"
+              create="source"
               label="Some label"
-              hint="Some hint"
+              :hint="source ? 'Card is valid' : 'Please enter card info'"
               persistent-hint
+              :success="!!source"
             />
           </v-col>
           <v-col cols="6">
             <v-text-field
-              success
               label="Some label"
               hint="Some hint"
               persistent-hint
+              :success="!!source"
             />
           </v-col>
         </v-row>
@@ -42,9 +43,8 @@
           <v-col cols="6">
             <v-stripe-card
               v-model="source"
-              font="Shadows Into Light"
+              font-name="Shadows Into Light"
               solo
-              success
               :api-key="apiKey"
               label="Some label"
               hint="Some hint"
@@ -54,7 +54,6 @@
           <v-col cols="6">
             <v-text-field
               solo
-              success
               label="Some label"
               hint="Some hint"
               persistent-hint
@@ -64,9 +63,10 @@
         <v-row>
           <v-col cols="6">
             <v-stripe-card
-              v-model="source"
+              v-model="token"
               filled
-              success
+              font-name="Hepta Slab"
+              font-url="https://fonts.googleapis.com/css?family=Hepta+Slab:700&display=swap"
               :api-key="apiKey"
               label="Some label"
               hint="Some hint"
@@ -76,7 +76,6 @@
           <v-col cols="6">
             <v-text-field
               filled
-              success
               label="Some label"
               hint="Some hint"
               persistent-hint
@@ -88,7 +87,6 @@
             <v-stripe-card
               v-model="source"
               outlined
-              success
               :api-key="apiKey"
               label="Some label"
               hint="Some hint"
@@ -98,7 +96,6 @@
           <v-col cols="6">
             <v-text-field
               outlined
-              success
               label="Some reall long label"
               hint="Some hint"
               persistent-hint
@@ -111,7 +108,6 @@
               v-model="source"
               solo
               outlined
-              success
               :api-key="apiKey"
               label="Some label"
               hint="Some hint"
@@ -122,7 +118,6 @@
             <v-text-field
               solo
               outlined
-              success
               label="Some label"
               hint="Some hint"
               persistent-hint
@@ -136,7 +131,7 @@
 
 <script>
   // import { VStripeCard } from '../src/'
-
+  import { mdiCheck } from '@mdi/js'
   export default {
     // components: {
     //   VStripeCard,
@@ -144,9 +139,13 @@
     data: () => ({
       apiKey: 'pk_test_TYooMQauvdEDq54NiTphI7jx',
       filled: false,
+      icons: {
+        check: mdiCheck,
+      },
       outlined: false,
       solo: false,
       source: null,
+      token: null,
     }),
   }
 </script>

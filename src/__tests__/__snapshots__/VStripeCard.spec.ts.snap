@@ -1,11 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`VStripeCard initialization should render component and match snapshot 1`] = `
+exports[`VStripeCard component initialization should render component and match snapshot 1`] = `
 <div class="v-input theme--light v-text-field v-stripe-card">
   <div class="v-input__control">
     <div class="v-input__slot">
       <div class="v-text-field__slot">
-        <div id="input-1">
+        <div id="input-1"
+             tabindex="-1"
+        >
         </div>
       </div>
       <div role="progressbar"
@@ -41,7 +43,7 @@ exports[`VStripeCard initialization should render component and match snapshot 1
 </div>
 `;
 
-exports[`VStripeCard internal functions genCardProps() should generate a \`cardProps\` object in the format that Stripe expects 1`] = `
+exports[`VStripeCard component internal functions and events genCardProps() should generate a \`cardProps\` object in the format that Stripe expects 1`] = `
 Object {
   "classes": Object {
     "base": "VStripeCard",
@@ -59,7 +61,7 @@ Object {
 }
 `;
 
-exports[`VStripeCard internal functions genCardProps() should generate a \`cardProps\` object in the format that Stripe expects 2`] = `
+exports[`VStripeCard component internal functions and events genCardProps() should generate a \`cardProps\` object in the format that Stripe expects 2`] = `
 Object {
   "classes": Object {
     "base": "VStripeCard",
@@ -95,7 +97,7 @@ Object {
 }
 `;
 
-exports[`VStripeCard internal functions genFont() should generate an \`ElementsCreateOptions\` object in the format that Stripe expects 1`] = `
+exports[`VStripeCard component internal functions and events genFont() should generate an \`ElementsCreateOptions\` object in the format that Stripe expects 1`] = `
 Object {
   "fonts": Array [
     Object {
@@ -105,7 +107,7 @@ Object {
 }
 `;
 
-exports[`VStripeCard internal functions genFont() should generate an \`ElementsCreateOptions\` object in the format that Stripe expects 2`] = `
+exports[`VStripeCard component internal functions and events genFont() should generate an \`ElementsCreateOptions\` object in the format that Stripe expects 2`] = `
 Object {
   "fonts": Array [
     Object {
@@ -115,7 +117,7 @@ Object {
 }
 `;
 
-exports[`VStripeCard internal functions genStyle() should generate a \`style\` object in the format that Stripe expects 1`] = `
+exports[`VStripeCard component internal functions and events genStyle() should generate a \`style\` object in the format that Stripe expects 1`] = `
 Object {
   "base": Object {
     "::placeholder": Object {
@@ -134,7 +136,7 @@ Object {
 }
 `;
 
-exports[`VStripeCard internal functions genStyle() should generate a \`style\` object in the format that Stripe expects 2`] = `
+exports[`VStripeCard component internal functions and events genStyle() should generate a \`style\` object in the format that Stripe expects 2`] = `
 Object {
   "base": Object {
     "::placeholder": Object {

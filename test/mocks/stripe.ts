@@ -2,31 +2,45 @@ function Stripe(publicKey: string, options?: stripe.StripeOptions): stripe.Strip
   // createToken(element: stripe.elements.Element, options?: stripe.TokenOptions): Promise<stripe.TokenResponse>
   // createToken(name: 'bank_account', options: stripe.BankAccountTokenOptions): Promise<stripe.TokenResponse>
   // createToken(name: 'pii', options: stripe.PiiTokenOptions): Promise<stripe.TokenResponse>
-  /**
-   * TODO: Implement a mock here that will support our tests
-   */
   function createToken(element: stripe.elements.Element|string, options?: any): Promise<stripe.TokenResponse> {
     const token = {
-      id: '',
-      object: '',
-      client_ip: '',
-      created: 0,
+      id: 'tok_1FDHCy2eZvKYlo2CPBL8Ss6R',
+      object: 'token',
+      client_ip: '127.0.0.1',
+      created: 1567198836,
       livemode: false,
-      type: '',
+      type: 'card',
       used: false,
     }
-    // const error = { type: 'invalid_request_error', charge: '', message: 'Not implemented' }
-    return Promise.resolve({ token, error: undefined })
+    const error: stripe.Error = { type: 'invalid_request_error', charge: '12345', message: 'Not implemented' }
+    const result = options ? { token } : { error }
+    return Promise.resolve(result)
   }
 
   // createSource(element: stripe.elements.Element, options?: { owner?: stripe.OwnerInfo }): Promise<stripe.SourceResponse>
   // createSource(options: stripe.SourceOptions): Promise<stripe.SourceResponse>
-  /**
-   * TODO: Implement a mock here that will support our tests
-   */
   function createSource(element: stripe.elements.Element|stripe.SourceOptions, options?: { owner?: stripe.OwnerInfo }): Promise<stripe.SourceResponse> {
-    // const error = { type: 'invalid_request_error', charge: '', message: 'Not implemented' }
-    return Promise.resolve({})
+    const source = {
+      client_secret: 'src_client_secret_Fiid9vTLYWwwNuGHggNiPKVe',
+      created: 1567198783,
+      currency: null,
+      id: 'src_1FDHC72eZvKYlo2COq7NiXT8',
+      object: 'source',
+      owner: {
+          address: null,
+          email: null,
+          name: null,
+          phone: null,
+          verified_address: null,
+          verified_email: null,
+          verified_name: null,
+          verified_phone: null,
+      },
+      usage: 'reusable'
+    }
+    const error: stripe.Error = { type: 'invalid_request_error', charge: '12345', message: 'Not implemented' }
+    const result = options ? { source } : { error }
+    return Promise.resolve(result)
   }
 
   /**
@@ -90,15 +104,18 @@ function Stripe(publicKey: string, options?: stripe.StripeOptions): stripe.Strip
         //   case 'iban':
         //   case 'idealBank':
             return {
-              mount(domElement: any): void {},
+              mount: jest.fn(),
               on(
                 event: stripe.elements.eventTypes|'click',
                 handler: stripe.elements.handler|((response: { preventDefault: () => void }) => void)
-              ): void {},
+              ): void {
+                // associate the event with the passed-in handler
+                this[event] = handler
+              },
               // on(event: 'click', handler: (response: { preventDefault: () => void }) => void): void {},
               focus(): void {},
               blur(): void {},
-              clear(): void {},
+              clear: jest.fn(),
               unmount(): void {},
               destroy(): void {},
               update(options: stripe.elements.ElementsOptions): void {},  
