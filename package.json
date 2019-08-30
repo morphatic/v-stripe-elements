@@ -1,6 +1,6 @@
 {
   "name": "v-stripe-elements",
-  "version": "1.0.0",
+  "version": "0.0.1-development",
   "description": "A Vue component that styles Stripe Elements to match the Vuetify UI library.",
   "author": "Morgan Benton <morgan.benton@gmail.com> (https://morphatic.com)",
   "license": "MIT",
