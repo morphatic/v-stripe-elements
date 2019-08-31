@@ -35122,7 +35122,6 @@ var base = vue__WEBPACK_IMPORTED_MODULE_0___default.a.extend({
 
               if (!error) {
                 this.errorBucket = [];
-                console.log('token: ', token);
                 this.$emit('input', token);
               } else {
                 // handle error
@@ -35143,7 +35142,6 @@ var base = vue__WEBPACK_IMPORTED_MODULE_0___default.a.extend({
 
               if (!error) {
                 this.errorBucket = [];
-                console.log('source: ', source);
                 this.$emit('input', source);
               } else {
                 // handle error

@@ -431,7 +431,6 @@ export default base.extend<options>().extend({
           const { token, error } = await this.stripe.createToken(this.card, this.options)
           if (!error) {
             this.errorBucket = []
-            console.log('token: ', token)
             this.$emit('input', token)
           } else {
             // handle error
@@ -441,7 +440,6 @@ export default base.extend<options>().extend({
           const { source, error } = await this.stripe.createSource(this.card, this.options)
           if (!error) {
             this.errorBucket = []
-            console.log('source: ', source)
             this.$emit('input', source)
           } else {
             // handle error

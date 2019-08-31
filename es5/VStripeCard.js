@@ -506,7 +506,6 @@ var _default2 = base.extend().extend({
 
                 if (!error) {
                   this.errorBucket = [];
-                  console.log('token: ', token);
                   this.$emit('input', token);
                 } else {
                   // handle error
@@ -527,7 +526,6 @@ var _default2 = base.extend().extend({
 
                 if (!_error) {
                   this.errorBucket = [];
-                  console.log('source: ', source);
                   this.$emit('input', source);
                 } else {
                   // handle error
