@@ -27,6 +27,7 @@
               label="Some label"
               :hint="source ? 'Card is valid' : 'Please enter card info'"
               persistent-hint
+              single-line
               :success="!!source"
             />
           </v-col>
@@ -35,6 +36,7 @@
               label="Some label"
               hint="Some hint"
               persistent-hint
+              single-line
               :success="!!source"
             />
           </v-col>

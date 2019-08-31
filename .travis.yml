@@ -23,4 +23,5 @@ script:
 
 after_success:
   - yarn coverage
+  - yarn build
   - yarn run semantic-release
