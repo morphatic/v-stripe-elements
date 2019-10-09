@@ -1,6 +1,6 @@
 import Vue from 'vue'
 // Utils
-import { mount, MountOptions, Wrapper } from '@vue/test-utils'
+import { shallowMount, MountOptions, Wrapper } from '@vue/test-utils'
 import { inspect } from 'util'
 
 // Mocks
@@ -15,6 +15,7 @@ const vuetifyMocks = {
       lang: {
         t: (val: string) => val,
       },
+      rtl: false,
     },
   },
 }
@@ -41,7 +42,7 @@ describe('VStripeCard', () => {
   
     beforeEach(() => {
       mountFunction = (options?: MountOptions<Instance>) => {
-        return mount(VStripeCard, {
+        return shallowMount(VStripeCard, {
           mocks: {
             ...vuetifyMocks,
           },

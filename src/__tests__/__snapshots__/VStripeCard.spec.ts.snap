@@ -10,34 +10,19 @@ exports[`VStripeCard component initialization should render component and match 
         >
         </div>
       </div>
-      <div role="progressbar"
-           aria-valuemin="0"
-           aria-valuemax="100"
-           class="v-progress-linear v-progress-linear--absolute theme--light"
-           style="height: 2px;"
+      <vuecomponent-stub color="primary"
+                         absolute="true"
+                         value="0"
+                         active="true"
+                         buffervalue="100"
+                         height="2"
+                         indeterminate="true"
       >
-        <div class="v-progress-linear__background primary"
-             style="opacity: 0.3; left: 0%; width: 100%;"
-        >
-        </div>
-        <div class="v-progress-linear__buffer">
-        </div>
-        <div class="v-progress-linear__indeterminate v-progress-linear__indeterminate--active">
-          <div class="v-progress-linear__indeterminate long primary">
-          </div>
-          <div class="v-progress-linear__indeterminate short primary">
-          </div>
-        </div>
-      </div>
+      </vuecomponent-stub>
     </div>
     <div class="v-text-field__details">
-      <div class="v-messages theme--light">
-        <span name="message-transition"
-              tag="div"
-              class="v-messages__wrapper"
-        >
-        </span>
-      </div>
+      <vuecomponent-stub value>
+      </vuecomponent-stub>
     </div>
   </div>
 </div>
