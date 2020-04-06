@@ -80,7 +80,7 @@
     "deepmerge": "^4.0.0",
     "dotenv": "^8.0.0",
     "eslint": "^6.1.0",
-    "eslint-loader": "^2.2.1",
+    "eslint-loader": "^4.0.0",
     "eslint-plugin-jest": "^22.17.0",
     "eslint-plugin-vue": "^5.2.3",
     "eslint-plugin-vuetify": "^1.0.0-beta.3",
