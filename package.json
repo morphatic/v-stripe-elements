@@ -71,7 +71,7 @@
     "babel-plugin-detective": "^2.0.0",
     "change-case": "^3.1.0",
     "commitizen": "^4.0.3",
-    "concurrently": "^4.1.1",
+    "concurrently": "^6.0.0",
     "core-js": "^3.2.1",
     "cross-env": "^6.0.3",
     "css-loader": "^3.2.0",
