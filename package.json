@@ -61,7 +61,7 @@
     "@types/node": "^12.7.2",
     "@types/stripe-v3": "^3.1.6",
     "@types/tapable": "^1.0.4",
-    "@types/webpack": "^4.32.1",
+    "@types/webpack": "^5.0.0",
     "@typescript-eslint/eslint-plugin": "^2.3.3",
     "@typescript-eslint/parser": "^2.3.3",
     "@vue/eslint-config-standard": "^4.0.0",
