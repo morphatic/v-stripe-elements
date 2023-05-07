@@ -93,7 +93,7 @@
     "jest-css-modules": "^2.1.0",
     "jest-environment-jsdom-fourteen": "^0.1.0",
     "jest-serializer-html": "^7.0.0",
-    "mini-css-extract-plugin": "^0.8.0",
+    "mini-css-extract-plugin": "^1.6.2",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
     "postcss-loader": "^3.0.0",
     "rimraf": "^3.0.0",
