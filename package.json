@@ -119,7 +119,7 @@
     "webpack": "^4.39.2",
     "webpack-cli": "^3.3.6",
     "webpack-dev-server": "^3.8.0",
-    "webpack-merge": "^4.2.2"
+    "webpack-merge": "^5.8.0"
   },
   "config": {
     "commitizen": {
