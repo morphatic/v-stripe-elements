@@ -25,5 +25,11 @@
     "test",
     "tph",
     "yoo"
-  ]
+  ],
+  "eslint.format.enable": true,
+  "typescript.tsdk": "node_modules\\typescript\\lib",
+  "eslint.codeActionsOnSave.rules": null,
+  "eslint.debug": true,
+  "javascript.format.insertSpaceBeforeFunctionParenthesis": true,
+  "typescript.format.insertSpaceBeforeFunctionParenthesis": true
 }

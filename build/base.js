@@ -21,7 +21,7 @@ exports.happyThreadPool = HappyPack.ThreadPool({
 })
 
 const cssLoaders = [
-  { loader: MiniCssExtractPlugin.loader, options: { hmr: !isProd } },
+  { loader: MiniCssExtractPlugin.loader, options: {} },
   { loader: 'css-loader', options: { sourceMap: !isProd } },
   { loader: 'postcss-loader', options: { sourceMap: !isProd } },
 ]
@@ -32,8 +32,8 @@ const sassLoaders = [
     loader: 'sass-loader',
     options: {
       implementation: require('sass'),
-      fiber: require('fibers'),
       indentedSyntax: true,
+      sassOptions: { quietDeps: true },
     },
   },
 ]
@@ -44,8 +44,8 @@ const scssLoaders = [
     loader: 'sass-loader',
     options: {
       implementation: require('sass'),
-      fiber: require('fibers'),
       indentedSyntax: false,
+      sassOptions: { quietDeps: true },
     },
   },
 ]
