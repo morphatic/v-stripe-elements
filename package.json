@@ -109,7 +109,7 @@
     "ts-jest": "^25.5.1",
     "ts-loader": "^8.2.0",
     "tslint": "^5.18.0",
-    "typescript": "~4.4.4",
+    "typescript": "~5.0.4",
     "typestrict": "^1.0.2",
     "url-loader": "^4.1.1",
     "vue": "^2.6.10",
