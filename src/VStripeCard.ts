@@ -2,8 +2,8 @@
 /// <reference path="../node_modules/vuetify/src/globals.d.ts" />
 import Vue, { VNode } from 'vue'
 import { VuetifyThemeVariant } from 'vuetify/types/services/theme'
-// import { VuetifyObject } from 'vuetify/types' // !this causes type errors if imported
 import { ElementStyles } from '../types'
+// import mixins from './util/mixins'
 
 // 3rd Party Libs
 import merge from 'deepmerge'
@@ -12,11 +12,11 @@ import merge from 'deepmerge'
 import './VStripeCard.sass'
 
 // Extensions and Components
-// @ts-ignore
 import { VProgressLinear, VTextField } from 'vuetify/lib'
 
 // Create Base Mixins and Define Custom Properties
 const base = Vue.extend({ mixins: [VTextField] })
+// const base = mixins(VTextField)
 interface options extends InstanceType<typeof base> {
   /**
    * Props unique to VStripeCard
@@ -30,20 +30,20 @@ interface options extends InstanceType<typeof base> {
    * Props that **should** have been inherited from VTextField
    * TODO: Figure out why these types aren't being recognized automatically
    */
-  autofocus: boolean
-  color: string|null
-  computedId: string
-  disabled: boolean
-  errorBucket: string[]
-  iconStyle: 'default'|'solid'
-  isDark: boolean
-  isFocused: boolean
-  labelWidth: number|string
-  lazyValue: any
-  loaderHeight: number|string
-  loading: string|boolean
-  outlined: boolean
-  $vuetify: any // VuetifyObject // importing this type from Vuetify causes errors for some reason
+  // autofocus: boolean
+  // color: string | null
+  // computedId: string
+  // disabled: boolean
+  // errorBucket: string[]
+  // iconStyle: 'default' | 'solid'
+  // isDark: boolean
+  // isFocused: boolean
+  // labelWidth: number | string
+  // lazyValue: any
+  // loaderHeight: number | string
+  // loading: string | boolean
+  // outlined: boolean
+  // $vuetify: Framework
 }
 
 // Extend VTextField to define the VStripeCard component
@@ -349,8 +349,7 @@ export default base.extend<options>().extend({
               this.genCard()
             }).catch((error: Error) => {
               this.loading = false
-              this.errorBucket.push('Error loading stripe')
-              throw new Error('[VStripeCard Error] There was a problem loading Stripe: ' + error.message)
+              this.errorBucket.push('Error loading stripe: ' + error.message)
             })
           }
         }
@@ -391,6 +390,9 @@ export default base.extend<options>().extend({
       if (e.empty) {
         this.okToSubmit = false
         this.lazyValue = !e.empty
+      }
+      if (!e.complete) {
+        this.okToSubmit = false
       }
     },
     /**

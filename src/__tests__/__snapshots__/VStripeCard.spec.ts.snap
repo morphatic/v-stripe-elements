@@ -10,19 +10,19 @@ exports[`VStripeCard component initialization should render component and match 
         >
         </div>
       </div>
-      <vuecomponent-stub color="primary"
-                         absolute="true"
-                         value="0"
-                         active="true"
-                         buffervalue="100"
-                         height="2"
-                         indeterminate="true"
+      <v-progress-linear-stub color="primary"
+                              absolute="true"
+                              value="0"
+                              active="true"
+                              buffervalue="100"
+                              height="2"
+                              indeterminate="true"
       >
-      </vuecomponent-stub>
+      </v-progress-linear-stub>
     </div>
     <div class="v-text-field__details">
-      <vuecomponent-stub value>
-      </vuecomponent-stub>
+      <v-messages-stub value>
+      </v-messages-stub>
     </div>
   </div>
 </div>

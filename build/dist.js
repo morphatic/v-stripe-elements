@@ -9,7 +9,7 @@
  */
 
 const webpack = require('webpack')
-const merge = require('webpack-merge') // merge multiple webpack configs
+const { merge } = require('webpack-merge') // merge multiple webpack configs
 const TerserPlugin = require('terser-webpack-plugin') // minifies JS
 const MiniCssExtractPlugin = require('mini-css-extract-plugin') // extracts CSS from JS
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin') // minifies extracted CSS
