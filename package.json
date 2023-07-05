@@ -103,7 +103,7 @@
     "rimraf": "^3.0.0",
     "sass": "^1.26.11",
     "sass-loader": "^7.2.0",
-    "semantic-release": "^17.2.3",
+    "semantic-release": "^21.0.7",
     "shelljs": "^0.8.3",
     "style-loader": "^1.0.0",
     "terser-webpack-plugin": "^4.2.3",
